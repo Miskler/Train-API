@@ -3,12 +3,12 @@ extends EditorPlugin
 
 var select_ways:Node = null
 
-var bottom_gui = preload("res://addons/train_api/scenes/ui.tscn").instantiate()
+var bottom_gui = preload("scenes/ui.tscn").instantiate()
 func _enter_tree():
 	print("Train API: plugin.gd: START")
-	add_custom_type("Train API", "Node2D", preload("scripts/ways.gd"), preload("train.svg"))
-	add_custom_type("RailWay", "Path2D", preload("scripts/railway.gd"), preload("way.svg"))
-	add_custom_type("Carriage", "Area2D", preload("scripts/carriage.gd"), preload("carriage.svg"))
+	add_custom_type("Train API", "Node2D", preload("scripts/ways.gd"), preload("resources/train.svg"))
+	add_custom_type("RailWay", "Path2D", preload("scripts/railway.gd"), preload("resources/way.svg"))
+	add_custom_type("Carriage", "Area2D", preload("scripts/carriage.gd"), preload("resources/carriage.svg"))
 	
 	add_control_to_container(EditorPlugin.CONTAINER_CANVAS_EDITOR_BOTTOM, bottom_gui)
 	_make_visible(false)
@@ -52,7 +52,7 @@ func _forward_canvas_gui_input(event):
 func new_way():
 	var root = get_tree().get_edited_scene_root()
 	
-	var path = preload("res://addons/train_api/scenes/path.tscn").instantiate()
+	var path = preload("scenes/railway.tscn").instantiate()
 	
 	path.curve = Curve2D.new()
 	path.curve.add_point(Vector2.ZERO)

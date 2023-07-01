@@ -1,11 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://cb7rblxh1qn84"]
+[gd_scene load_steps=4 format=3 uid="uid://cb7rblxh1qn84"]
 
-[ext_resource type="Script" path="res://addons/train_api/scripts/railway.gd" id="1_4f0y4"]
+[ext_resource type="Script" path="res://addons/train_api/scripts/railway.gd" id="1_ygo3r"]
+
+[sub_resource type="Curve2D" id="Curve2D_f6hhm"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0)
+}
+point_count = 1
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_a37x0"]
+radius = 40.0
 
 [node name="RailWay" type="Path2D"]
-script = ExtResource("1_4f0y4")
+curve = SubResource("Curve2D_f6hhm")
+script = ExtResource("1_ygo3r")
 
 [node name="help_train" type="PathFollow2D" parent="."]
 progress = 2337.9

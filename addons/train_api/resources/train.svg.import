@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3c1ph27urokj"
-path="res://.godot/imported/train.svg-7659c67fb6bb368c386ae0b8f823f367.ctex"
+path="res://.godot/imported/train.svg-ae43061fbbf79831375d08343fde8da8.ctex"
 metadata={
 "editor_scale": 1.0,
 "has_editor_variant": true,
@@ -12,8 +12,8 @@ metadata={
 
 [deps]
 
-source_file="res://addons/train_api/train.svg"
-dest_files=["res://.godot/imported/train.svg-7659c67fb6bb368c386ae0b8f823f367.ctex"]
+source_file="res://addons/train_api/resources/train.svg"
+dest_files=["res://.godot/imported/train.svg-ae43061fbbf79831375d08343fde8da8.ctex"]
 
 [params]
 

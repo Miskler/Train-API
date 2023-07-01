@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbdcnylv7d17v"
-path="res://.godot/imported/carriage.svg-c79924792159961e12c3e1c5f5a09bcb.ctex"
+uid="uid://bu7iolfl0jo1n"
+path="res://.godot/imported/way.svg-8447abf9e17afc78282eeee037b6a101.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/train_api/carriage.svg"
-dest_files=["res://.godot/imported/carriage.svg-c79924792159961e12c3e1c5f5a09bcb.ctex"]
+source_file="res://addons/train_api/resources/way.svg"
+dest_files=["res://.godot/imported/way.svg-8447abf9e17afc78282eeee037b6a101.ctex"]
 
 [params]
 
@@ -32,6 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=0.03
+svg/scale=0.04
 editor/scale_with_editor_scale=false
 editor/convert_colors_with_editor_theme=false

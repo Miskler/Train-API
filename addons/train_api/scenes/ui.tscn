@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://d0xawetbm8lnh"]
 
-[ext_resource type="Script" path="res://addons/train_api/scripts/gui.gd" id="1_syand"]
+[ext_resource type="Script" path="res://addons/train_api/scripts/ui.gd" id="1_5vvyx"]
 
 [node name="Control" type="Control"]
 clip_contents = true
@@ -12,7 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
-script = ExtResource("1_syand")
+script = ExtResource("1_5vvyx")
 
 [node name="box" type="HBoxContainer" parent="."]
 custom_minimum_size = Vector2(0, 35)

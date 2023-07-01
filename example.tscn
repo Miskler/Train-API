@@ -1,11 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://cmjrwvmu0u5mv"]
+[gd_scene load_steps=9 format=3 uid="uid://cmjrwvmu0u5mv"]
 
-[ext_resource type="Texture2D" uid="uid://c7wp35b5s3b8d" path="res://icon.svg" id="2_dirpy"]
-[ext_resource type="PackedScene" uid="uid://cb7rblxh1qn84" path="res://addons/train_api/scenes/path.tscn" id="3_hl5vs"]
-[ext_resource type="Script" path="res://addons/train_api/scripts/ways.gd" id="3_ko6ip"]
-[ext_resource type="Texture2D" uid="uid://b3c1ph27urokj" path="res://addons/train_api/train.svg" id="4_rfg31"]
-[ext_resource type="PackedScene" uid="uid://bjtuqnasublrd" path="res://addons/train_api/scenes/carriage.tscn" id="5_o3eoo"]
-[ext_resource type="Script" path="res://addons/train_api/scripts/railway.gd" id="5_phie2"]
+[ext_resource type="Script" path="res://addons/train_api/scripts/ways.gd" id="1_26cfl"]
+[ext_resource type="PackedScene" uid="uid://cb7rblxh1qn84" path="res://addons/train_api/scenes/railway.tscn" id="2_rbcdh"]
+[ext_resource type="Texture2D" uid="uid://c7wp35b5s3b8d" path="res://icon.svg" id="3_2bkm5"]
+[ext_resource type="Texture2D" uid="uid://b3c1ph27urokj" path="res://addons/train_api/resources/train.svg" id="4_mtbfk"]
+[ext_resource type="PackedScene" uid="uid://bjtuqnasublrd" path="res://addons/train_api/scenes/carriage.tscn" id="5_5yyyn"]
 
 [sub_resource type="Curve2D" id="Curve2D_hmgo6"]
 _data = {
@@ -32,28 +31,27 @@ position = Vector2(347, 0)
 zoom = Vector2(0.8, 0.8)
 
 [node name="Train API" type="Node2D" parent="."]
-script = ExtResource("3_ko6ip")
+script = ExtResource("1_26cfl")
 
-[node name="railway" parent="Train API" instance=ExtResource("3_hl5vs")]
+[node name="railway" parent="Train API" instance=ExtResource("2_rbcdh")]
 position = Vector2(356.888, 373.667)
 curve = SubResource("Curve2D_hmgo6")
-texture = ExtResource("2_dirpy")
+texture = ExtResource("3_2bkm5")
 
-[node name="railway2" parent="Train API" instance=ExtResource("3_hl5vs")]
+[node name="railway2" parent="Train API" instance=ExtResource("2_rbcdh")]
 position = Vector2(425.791, -348.187)
 curve = SubResource("Curve2D_njgqq")
-texture = ExtResource("4_rfg31")
+texture = ExtResource("4_mtbfk")
 width = 20.0
 one_sided = true
 
-[node name="railway3" type="Path2D" parent="Train API" instance=ExtResource("3_hl5vs")]
+[node name="railway3" parent="Train API" instance=ExtResource("2_rbcdh")]
 position = Vector2(425.411, -351.205)
 curve = SubResource("Curve2D_odiuq")
-script = ExtResource("5_phie2")
-texture = ExtResource("2_dirpy")
+texture = ExtResource("3_2bkm5")
 width = 20.0
 
-[node name="Carriage" parent="." node_paths=PackedStringArray("select_railway") instance=ExtResource("5_o3eoo")]
+[node name="Carriage" parent="." node_paths=PackedStringArray("select_railway") instance=ExtResource("5_5yyyn")]
 position = Vector2(-230, -133)
 select_railway = NodePath("../Train API/railway")
 speed = 300.0

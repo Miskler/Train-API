@@ -34,10 +34,22 @@ func _ready():
 	tool_connection_zone_set(connection_zone)
 
 func event_gui_way():
-	get_node("visual").points = curve.tessellate()
-	$beginning.position = get_node("visual").points[0]
-	$end.position = get_node("visual").points[-1]
-	print("Train API: "+name+": event_gui_way() -> update")
+	if curve != null and curve.tessellate().size() > 0:
+		$beginning.show()
+		$end.show()
+		get_node("visual").points = curve.tessellate()
+		$beginning.position = get_node("visual").points[0]
+		$end.position = get_node("visual").points[-1]
+		print("Train API: "+name+": event_gui_way() -> update")
+	else:
+		$beginning.hide()
+		$end.hide()
+		get_node("visual").points = PackedVector2Array([Vector2.ZERO])
+		print("Train API: "+name+": event_gui_way() -> ERROR! Log:")
+		print(
+			"curve created IS "+str(curve != null),
+			";   RailWay points > 0 IS "+str(curve != null and curve.tessellate().size() > 0)+"."
+		)
 
 
 #Помогает поезду двигаться

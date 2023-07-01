@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="train"
-run/main_scene="res://test.tscn"
+run/main_scene="res://example.tscn"
 config/features=PackedStringArray("4.0", "GL Compatibility")
 
 [editor_plugins]
