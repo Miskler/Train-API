@@ -30,7 +30,7 @@ Not ready.
 
 🟢 3. Логирование. / Logging.
 
-🟡 4. Функция "подмагничивания" концов дорог рядом. / The function of "magnetizing" the ends of roads nearby.
+🛠️ 4. Функция "подмагничивания" концов дорог рядом. / The function of "magnetizing" the ends of roads nearby.
 
 🟡 5. Система возвращения на исходную ветку при обратном движении во время незаконченного поворота. / The system of returning to the original branch during the reverse movement during an unfinished turn.
 
