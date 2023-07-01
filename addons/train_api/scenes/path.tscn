@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://cb7rblxh1qn84"]
+
+[ext_resource type="Script" path="res://addons/train_api/scripts/railway.gd" id="1_4f0y4"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_a37x0"]
+
+[node name="RailWay" type="Path2D"]
+script = ExtResource("1_4f0y4")
+
+[node name="help_train" type="PathFollow2D" parent="."]
+progress = 2337.9
+
+[node name="visual" type="Line2D" parent="."]
+texture_mode = 1
+
+[node name="beginning" type="Area2D" parent="." groups=["train_api_turn"]]
+collision_layer = 8388608
+collision_mask = 8388608
+
+[node name="shape" type="CollisionShape2D" parent="beginning"]
+shape = SubResource("CircleShape2D_a37x0")
+
+[node name="end" type="Area2D" parent="." groups=["train_api_turn"]]
+editor_description = "vvv"
+collision_layer = 8388608
+collision_mask = 8388608
+
+[node name="shape" type="CollisionShape2D" parent="end"]
+shape = SubResource("CircleShape2D_a37x0")

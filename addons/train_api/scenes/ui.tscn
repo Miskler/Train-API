@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=3 uid="uid://d0xawetbm8lnh"]
+
+[ext_resource type="Script" path="res://addons/train_api/scripts/gui.gd" id="1_syand"]
+
+[node name="Control" type="Control"]
+clip_contents = true
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 3
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_syand")
+
+[node name="box" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.5
+offset_right = -2.0
+offset_bottom = -2.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 2
+
+[node name="empty2" type="Control" parent="box"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
+[node name="ways_binding" type="CheckBox" parent="box"]
+layout_mode = 2
+tooltip_text = "В разработке!
+
+Если пути разных рельс будут рядом,
+они автоматически \"примагнитятся\" друг к другу."
+disabled = true
+text = "Привязка путей"
+
+[node name="edit_or_new" type="CheckBox" parent="box"]
+layout_mode = 2
+tooltip_text = "Создаёт новую путь, кликните по месту желаймого размещения"
+button_pressed = true
+text = "Новый"
+
+[node name="empty" type="Control" parent="box"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
+[node name="binding" type="OptionButton" parent="box"]
+layout_mode = 2
+tooltip_text = "Привязка интерфейса"
+item_count = 3
+selected = 2
+popup/item_0/text = "Лево"
+popup/item_0/id = 0
+popup/item_1/text = "Центр"
+popup/item_1/id = 1
+popup/item_2/text = "Право"
+popup/item_2/id = 2
+
+[node name="TextureRect" type="TextureRect" parent="box"]
+layout_mode = 2
+
+[connection signal="toggled" from="box/edit_or_new" to="." method="edit_or_new_toggled"]
+[connection signal="item_selected" from="box/binding" to="." method="binding_selected"]
