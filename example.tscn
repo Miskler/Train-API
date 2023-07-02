@@ -1,34 +1,74 @@
-[gd_scene load_steps=9 format=3 uid="uid://cmjrwvmu0u5mv"]
+[gd_scene load_steps=10 format=3 uid="uid://cmjrwvmu0u5mv"]
 
 [ext_resource type="Script" path="res://addons/train_api/scripts/ways.gd" id="1_26cfl"]
 [ext_resource type="PackedScene" uid="uid://cb7rblxh1qn84" path="res://addons/train_api/scenes/railway.tscn" id="2_rbcdh"]
 [ext_resource type="Texture2D" uid="uid://c7wp35b5s3b8d" path="res://icon.svg" id="3_2bkm5"]
 [ext_resource type="Texture2D" uid="uid://b3c1ph27urokj" path="res://addons/train_api/resources/train.svg" id="4_mtbfk"]
 [ext_resource type="PackedScene" uid="uid://bjtuqnasublrd" path="res://addons/train_api/scenes/carriage.tscn" id="5_5yyyn"]
+[ext_resource type="Script" path="res://example_train_control.gd" id="6_5fw7x"]
 
 [sub_resource type="Curve2D" id="Curve2D_hmgo6"]
 _data = {
-"points": PackedVector2Array(-8.4375, 2.3125, 8.4375, -2.3125, 3.112, 2.33301, -45, 29, 45, -29, 217.112, -70.667, -28, 55, 28, -55, 353.112, -215.667, 2.66968, 62.7375, -2.66968, -62.7375, 400.112, -437.667, 29.3665, 50.7239, -29.3665, -50.7239, 367.112, -578.667, 92.104, 40.0452, -92.104, -40.0452, 228.112, -679.667, 0, 0, 0, 0, 67.112, -725.667)
+"points": PackedVector2Array(-8.4375, 2.3125, 8.4375, -2.3125, -21.888, 2.33301, -45, 29, 45, -29, 212.112, -64.667, -28, 55, 28, -55, 353.112, -215.667, 2.66968, 62.7375, -2.66968, -62.7375, 400.112, -437.667, 29.3665, 50.7239, -29.3665, -50.7239, 367.112, -578.667, 92.104, 40.0452, -92.104, -40.0452, 228.112, -679.667, 0, 0, 0, 0, 67.112, -725.667)
 }
 point_count = 7
 
 [sub_resource type="Curve2D" id="Curve2D_njgqq"]
 _data = {
-"points": PackedVector2Array(46.0209, 17.3982, -46.0209, -17.3982, -65.791, 724.187, 0, 0, 0, 0, -133.791, 676.187, 74.1434, -9.13425, -74.1434, 9.13425, -215.791, -24.813, 25.789, -25.789, -25.789, 25.789, -344.791, 35.187, 26.1318, -52.9827, -26.1318, 52.9827, -417.791, 136.187, -4.23785, -78.4003, 4.23785, 78.4003, -442.791, 352.187, -24.3676, -37.0812, 24.3676, 37.0812, -412.791, 519.187, -29.6601, -26.3726, 29.6601, 26.3726, -315.791, 644.187, -55.7173, -20.1044, 55.7173, 20.1044, -223.791, 703.187, 0, 0, 0, 0, -113.791, 66.187, 0, 0, 0, 0, -1.79099, -3.81299)
+"points": PackedVector2Array(46.0209, 17.3982, 0, 0, -90.791, 724.187, 74.1434, -9.13425, -74.1434, 9.13425, -215.791, -24.813, 25.789, -25.789, -25.789, 25.789, -344.791, 35.187, 26.1318, -52.9827, -26.1318, 52.9827, -417.791, 136.187, -4.23785, -78.4003, 4.23785, 78.4003, -442.791, 352.187, -24.3676, -37.0812, 24.3676, 37.0812, -412.791, 519.187, -29.6601, -26.3726, 29.6601, 26.3726, -315.791, 644.187, -55.7173, -20.1044, 55.7173, 20.1044, -223.791, 703.187, 0, 0, 0, 0, 0.209015, -6.81299)
 }
-point_count = 11
+point_count = 9
 
 [sub_resource type="Curve2D" id="Curve2D_odiuq"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -1.41101, -0.795013, 0, 0, 0, 0, -71.4106, 218.205, 0, 0, 0, 0, -81.4106, 487.205, 0, 0, 0, 0, -65.411, 727.205)
+"points": PackedVector2Array(0, 0, 0, 0, -2.41101, -0.795013, 0, 0, 0, 0, -71.4106, 218.205, 0, 0, 0, 0, -18.411, 543.205, 0, 0, 0, 0, -90.411, 727.205)
 }
 point_count = 4
 
 [node name="world" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(347, 0)
+position = Vector2(350, 0)
 zoom = Vector2(0.8, 0.8)
+
+[node name="interface" type="CanvasLayer" parent="Camera2D"]
+script = ExtResource("6_5fw7x")
+
+[node name="full" type="Control" parent="Camera2D/interface"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="control_speed" type="HSlider" parent="Camera2D/interface/full"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -27.0
+grow_horizontal = 2
+grow_vertical = 0
+min_value = -100.0
+
+[node name="speed" type="Label" parent="Camera2D/interface/full"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -68.0
+offset_right = 20.0
+offset_bottom = -45.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Train API" type="Node2D" parent="."]
 script = ExtResource("1_26cfl")
@@ -43,16 +83,17 @@ position = Vector2(425.791, -348.187)
 curve = SubResource("Curve2D_njgqq")
 texture = ExtResource("4_mtbfk")
 width = 20.0
-one_sided = true
 
 [node name="railway3" parent="Train API" instance=ExtResource("2_rbcdh")]
 position = Vector2(425.411, -351.205)
 curve = SubResource("Curve2D_odiuq")
 texture = ExtResource("3_2bkm5")
-width = 20.0
+width = 5.0
 
 [node name="Carriage" parent="." node_paths=PackedStringArray("select_railway") instance=ExtResource("5_5yyyn")]
 position = Vector2(-230, -133)
 select_railway = NodePath("../Train API/railway")
-speed = 300.0
+speed = 0.0
 selected_turn = 1
+
+[connection signal="value_changed" from="Camera2D/interface/full/control_speed" to="Camera2D/interface" method="value_changed"]

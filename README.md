@@ -33,7 +33,7 @@ Not ready.
 
 🔴 4. Функция "подмагничивания" концов дорог рядом. / The function of "magnetizing" the ends of roads nearby.
 
-	❗ Советую вам использовать попиксельную привязку. / I advise you to use pixel-by-pixel binding.
+	❗ Советую использовать попиксельную привязку. / I advise to use pixel-by-pixel binding.
 
 🛠️ 5. Система возвращения на исходную ветку при обратном движении во время незаконченного поворота. / The system of returning to the original branch during the reverse movement during an unfinished turn.
 

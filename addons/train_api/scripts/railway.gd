@@ -65,15 +65,15 @@ func help_train(pos:float) -> Vector2:
 func length_path() -> float:
 	return curve.get_baked_length()
 
-#Возвращают данные вида [position_fork, [paths]]
+#Возвращают данные вида [position_fork, [paths], is_begin_fork]
 func get_previous_fork() -> Array:
-	return [0, get_fork_worker($beginning)]
+	return [0, get_fork_worker($beginning, true), true]
 func get_next_fork()     -> Array:
-	return [length_path(), get_fork_worker($end)]
-func get_fork_worker(area:Area2D) -> Array:
+	return [length_path(), get_fork_worker($end, false), false]
+func get_fork_worker(area:Area2D, begin:bool = false) -> Array:
 	var turns = []
 	for node in area.get_overlapping_areas():
 		if node.is_in_group("train_api_turn") and node.get_parent() is RailWay:
 			if node.name == "beginning" or not node.get_parent().one_sided:
-				turns.append([node.get_parent(), node.name == "end"])
+				turns.append([node.get_parent(), ((begin and node.name == "beginning") or (not begin and node.name == "end")), node.name == "end"])
 	return turns
