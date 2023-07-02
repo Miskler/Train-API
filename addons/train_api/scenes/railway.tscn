@@ -9,7 +9,6 @@ _data = {
 point_count = 1
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_a37x0"]
-radius = 40.0
 
 [node name="RailWay" type="Path2D"]
 curve = SubResource("Curve2D_f6hhm")
@@ -19,6 +18,7 @@ script = ExtResource("1_ygo3r")
 progress = 2337.9
 
 [node name="visual" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0)
 texture_mode = 1
 
 [node name="beginning" type="Area2D" parent="." groups=["train_api_turn"]]

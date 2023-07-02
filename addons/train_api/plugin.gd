@@ -44,7 +44,8 @@ func _forward_canvas_gui_input(event):
 		return false
 	elif event is InputEventMouseButton and select_ways != null and event.button_index == 1 and bottom_gui.edit_or_new:
 		new_way()
-	elif event is InputEventMouseButton and select_ways != null and select_ways is RailWay:
+	elif event is InputEventMouse and select_ways != null and select_ways is RailWay and \
+			select_ways.curve.tessellate() != select_ways.get_node("visual").points:
 		select_ways.event_gui_way()
 	return true
 

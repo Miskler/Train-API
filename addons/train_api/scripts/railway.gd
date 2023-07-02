@@ -33,14 +33,16 @@ func _ready():
 	tool_width_set(width)
 	tool_connection_zone_set(connection_zone)
 
-func event_gui_way():
+func event_gui_way() -> bool:
 	if curve != null and curve.tessellate().size() > 0:
 		$beginning.show()
 		$end.show()
 		get_node("visual").points = curve.tessellate()
+		
 		$beginning.position = get_node("visual").points[0]
 		$end.position = get_node("visual").points[-1]
 		print("Train API: "+name+": event_gui_way() -> update")
+		return true
 	else:
 		$beginning.hide()
 		$end.hide()
@@ -50,6 +52,7 @@ func event_gui_way():
 			"curve created IS "+str(curve != null),
 			";   RailWay points > 0 IS "+str(curve != null and curve.tessellate().size() > 0)+"."
 		)
+	return false
 
 
 #Помогает поезду двигаться
@@ -65,12 +68,12 @@ func length_path() -> float:
 #Возвращают данные вида [position_fork, [paths]]
 func get_previous_fork() -> Array:
 	return [0, get_fork_worker($beginning)]
-func get_next_fork() -> Array:
+func get_next_fork()     -> Array:
 	return [length_path(), get_fork_worker($end)]
 func get_fork_worker(area:Area2D) -> Array:
 	var turns = []
 	for node in area.get_overlapping_areas():
 		if node.is_in_group("train_api_turn") and node.get_parent() is RailWay:
-			if (node.name == "beginning" or not node.get_parent().one_sided):
+			if node.name == "beginning" or not node.get_parent().one_sided:
 				turns.append([node.get_parent(), node.name == "end"])
 	return turns

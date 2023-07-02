@@ -29,22 +29,13 @@ grow_vertical = 2
 alignment = 2
 
 [node name="empty2" type="Control" parent="box"]
+visible = false
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-
-[node name="ways_binding" type="CheckBox" parent="box"]
-layout_mode = 2
-tooltip_text = "В разработке!
-
-Если пути разных рельс будут рядом,
-они автоматически \"примагнитятся\" друг к другу."
-disabled = true
-text = "Привязка путей"
 
 [node name="edit_or_new" type="CheckBox" parent="box"]
 layout_mode = 2
 tooltip_text = "Создаёт новую путь, кликните по месту желаймого размещения"
-button_pressed = true
 text = "Новый"
 
 [node name="empty" type="Control" parent="box"]

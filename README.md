@@ -30,22 +30,24 @@ Not ready.
 
 🟢 3. Логирование. / Logging.
 
-🛠️ 4. Функция "подмагничивания" концов дорог рядом. / The function of "magnetizing" the ends of roads nearby.
+🔴 4. Функция "подмагничивания" концов дорог рядом. / The function of "magnetizing" the ends of roads nearby.
 
-🟡 5. Система возвращения на исходную ветку при обратном движении во время незаконченного поворота. / The system of returning to the original branch during the reverse movement during an unfinished turn.
+	❗ Советую вам использовать попиксельную привязку. / I advise you to use pixel-by-pixel binding.
 
-🟡 5. Система следования вагонов друг за другом *(сцепка/расцепка)*. / The system of cars following each other *(coupling/uncoupling)*
+🛠️ 5. Система возвращения на исходную ветку при обратном движении во время незаконченного поворота. / The system of returning to the original branch during the reverse movement during an unfinished turn.
 
-🟡 6. Функция отключения логирования. / The function of disabling logging.
+🟡 6. Система следования вагонов друг за другом *(сцепка/расцепка)*. / The system of cars following each other *(coupling/uncoupling)*
 
-🟡 7. Работа над API *(множество сигналов, переменные-переключатели логики)* для лучшей работы. / Working on the API *(lots of signals, logic switch variables)* for better performance.
+🟡 7. Функция отключения логирования. / The function of disabling logging.
 
-🟡 8. Отладка. / Debugging.
+🟡 8. Работа над API *(множество сигналов, переменные-переключатели логики)* для лучшей работы. / Working on the API *(lots of signals, logic switch variables)* for better performance.
 
-🟡 9. Документирование. / Documentation.
+🟡 9. Отладка. / Debugging.
 
-🟡 10. Перевод плагина на английский. / Translation of the plugin into English.
+🟡 10. Документирование. / Documentation.
 
-🟡 11. Серия обучающих видео на ютуб по работе с плагином. / A series of tutorial videos on YouTube on working with the plugin.
+🟡 11. Перевод плагина на английский. / Translation of the plugin into English.
 
-🟡 12. Стадия пассивной поддержки. / The stage of passive support.
+🟡 12. Серия обучающих видео на ютуб по работе с плагином. / A series of tutorial videos on YouTube on working with the plugin.
+
+🟡 13. Стадия пассивной поддержки. / The stage of passive support.

@@ -13,6 +13,7 @@ config_version=5
 config/name="train"
 run/main_scene="res://example.tscn"
 config/features=PackedStringArray("4.0", "GL Compatibility")
+boot_splash/image="res://icon.svg"
 
 [editor_plugins]
 
