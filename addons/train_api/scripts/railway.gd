@@ -46,6 +46,7 @@ func event_gui_way() -> bool:
 	else:
 		$beginning.hide()
 		$end.hide()
+		
 		get_node("visual").points = PackedVector2Array([Vector2.ZERO])
 		print("Train API: "+name+": event_gui_way() -> ERROR! Log:")
 		print(

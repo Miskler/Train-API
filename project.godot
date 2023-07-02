@@ -16,7 +16,7 @@ config/features=PackedStringArray("4.0", "GL Compatibility")
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/train_api/plugin.cfg")
+enabled=PackedStringArray("res://addons/plugin_refresher/plugin.cfg", "res://addons/train_api/plugin.cfg")
 
 [layer_names]
 
