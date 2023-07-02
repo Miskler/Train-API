@@ -35,9 +35,9 @@ Not ready.
 
 	❗ Советую использовать попиксельную привязку. / I advise to use pixel-by-pixel binding.
 
-🛠️ 5. Система возвращения на исходную ветку при обратном движении во время незаконченного поворота. / The system of returning to the original branch during the reverse movement during an unfinished turn.
+🟢 5. Система возвращения на исходную ветку при обратном движении во время незаконченного поворота. / The system of returning to the original branch during the reverse movement during an unfinished turn.
 
-🟡 6. Система следования вагонов друг за другом *(сцепка/расцепка)*. / The system of cars following each other *(coupling/uncoupling)*
+🛠️ 6. Система следования вагонов друг за другом *(сцепка/расцепка)*. / The system of cars following each other *(coupling/uncoupling)*
 
 🟡 7. Функция отключения логирования. / The function of disabling logging.
 

@@ -75,5 +75,5 @@ func get_fork_worker(area:Area2D, begin:bool = false) -> Array:
 	for node in area.get_overlapping_areas():
 		if node.is_in_group("train_api_turn") and node.get_parent() is RailWay:
 			if node.name == "beginning" or not node.get_parent().one_sided:
-				turns.append([node.get_parent(), ((begin and node.name == "beginning") or (not begin and node.name == "end")), node.name == "end"])
+				turns.append([node.get_parent(), begin and node.name == "beginning", node.name == "end"])
 	return turns
