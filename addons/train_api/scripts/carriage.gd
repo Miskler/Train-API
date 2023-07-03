@@ -1,23 +1,52 @@
 extends Area2D
 class_name Carriage
 
-@export var select_railway:Node = null         #То в сторону чего поезд поворачивается
-var select_position_railway:float = CAR_LENGTH #Позиция на отрезке
+
+@export var select_railway:RailWay = null         #То в сторону чего поезд поворачивается
+var select_position_railway:float = CAR_LENGTH    #Позиция на отрезке
 var select_inverted_path:bool = false
 
-@export var real_railway:Node = null           #То, где он находится
-@export var real_position_railway:float = 0.0  #Позиция на отрезке
+@export var real_railway:RailWay = null           #То, где он находится
+@export var real_position_railway:float = 0.0     #Позиция на отрезке
 var real_inverted_path:bool = false
 
-@export var speed:float = 1.0                  #Скорость и направление движения
 
-@export var selected_turn:int = 0              #Выбранный поворот
+@export_category("Move")
+@export var speed:float = 1.0                     #Скорость и направление движения
 
-const CAR_LENGTH:int = 138                     #Длина вагона
-#Если поезд хочет переключится на трек с конца, то вагон будет это учитывать
+@export var selected_turn:int = 0                 #Выбранный поворот
+
+
+#Поезд может менять свою длину в динамике, но не всегда!
+#1. Нужно чтобы обе части поезда находились на одной дороге
+#2. Чтобы новая длина была минимум 1
+#3. Чтобы новая длина+текущая позиция при установке прямо сейчас не выходила за длину текущего отрезка
+#   ЛИБО
+#1. У вагона сейчас не установлена дорога select_railway
+#2. Чтобы новая длина была минимум 1
+@export var CAR_LENGTH:float = 138 :       #Длина вагона
+	set = tool_car_length_reset
+func tool_car_length_reset(new_length:float):
+	if new_length >= 1 and(select_railway == null or real_railway == select_railway):
+		var new_pos = new_length
+		if select_railway != null:
+			if select_position_railway >= real_position_railway and real_position_railway+new_length<select_railway.length_path():
+				select_position_railway = real_position_railway+new_length
+			elif select_position_railway < real_position_railway and real_position_railway-new_length>0:
+				select_position_railway = real_position_railway-new_length
+			else: return
+		else:
+			select_position_railway = real_position_railway+new_length
+		print("Train API: "+name+": tool_car_length_reset() -> update to "+str(new_length))
+		CAR_LENGTH = new_length
+		$in_train.shape.size.x = new_length
+		$in_train.position.x = new_length/2.0
+		$icon.size.x = new_length
 
 
 func _ready():
+	$in_train.shape = $in_train.shape.duplicate()
+	select_position_railway = CAR_LENGTH
 	var dd = get_children()+[self]
 	printt(dd, self in dd)
 

@@ -53,6 +53,16 @@ grow_horizontal = 2
 grow_vertical = 0
 min_value = -100.0
 
+[node name="control_speed2" type="HSlider" parent="Camera2D/interface/full"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 16.0
+grow_horizontal = 2
+min_value = 1.0
+max_value = 300.0
+value = 100.0
+
 [node name="speed" type="Label" parent="Camera2D/interface/full"]
 layout_mode = 1
 anchors_preset = 7
@@ -97,3 +107,4 @@ speed = 0.0
 selected_turn = 1
 
 [connection signal="value_changed" from="Camera2D/interface/full/control_speed" to="Camera2D/interface" method="value_changed"]
+[connection signal="value_changed" from="Camera2D/interface/full/control_speed2" to="Camera2D/interface" method="_on_control_speed_2_value_changed"]

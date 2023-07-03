@@ -13,7 +13,10 @@ script = ExtResource("1_mhbqe")
 position = Vector2(69, 0)
 shape = SubResource("RectangleShape2D_8s04h")
 
-[node name="Icon" type="Sprite2D" parent="."]
-position = Vector2(69, 0)
-scale = Vector2(1.07813, 0.390625)
+[node name="icon" type="TextureRect" parent="."]
+offset_top = -25.0
+offset_right = 138.0
+offset_bottom = 25.0
+pivot_offset = Vector2(0, 25)
 texture = ExtResource("2_aesii")
+expand_mode = 1

@@ -13,6 +13,8 @@ func _enter_tree():
 	add_control_to_container(EditorPlugin.CONTAINER_CANVAS_EDITOR_BOTTOM, bottom_gui)
 	_make_visible(false)
 	set_force_draw_over_forwarding_enabled()
+	
+	get_editor_interface().get_selection().clear()
 
 
 func _exit_tree():
