@@ -35,20 +35,22 @@ Not ready.
 
 	❗ Советую использовать попиксельную привязку. / I advise to use pixel-by-pixel binding.
 
-🟢 5. Система возвращения на исходную ветку при обратном движении во время незаконченного поворота. / The system of returning to the original branch during the reverse movement during an unfinished turn.
+🟢 5. Поддержка произвольной длины вагона. / Support for arbitrary car length.
 
-🛠️ 6. Система следования вагонов друг за другом *(сцепка/расцепка)*. / The system of cars following each other *(coupling/uncoupling)*
+🟢 6. Система возвращения на исходную ветку при обратном движении во время незаконченного поворота. / The system of returning to the original branch during the reverse movement during an unfinished turn.
 
-🟡 7. Функция отключения логирования. / The function of disabling logging.
+🛠️ 7. Система следования вагонов друг за другом *(сцепка/расцепка)*. / The system of cars following each other *(coupling/uncoupling)*
 
-🟡 8. Работа над API *(множество сигналов, переменные-переключатели логики)* для лучшей работы. / Working on the API *(lots of signals, logic switch variables)* for better performance.
+🟡 8. Функция отключения логирования. / The function of disabling logging.
 
-🟡 9. Отладка. / Debugging.
+🟡 9. Работа над API *(множество сигналов, переменные-переключатели логики)* для лучшей работы. / Working on the API *(lots of signals, logic switch variables)* for better performance.
 
-🟡 10. Документирование. / Documentation.
+🟡 10. Отладка. / Debugging.
 
-🟡 11. Перевод плагина на английский. / Translation of the plugin into English.
+🟡 11. Документирование. / Documentation.
 
-🟡 12. Серия обучающих видео на ютуб по работе с плагином. / A series of tutorial videos on YouTube on working with the plugin.
+🟢 12. Перевод плагина на английский. / Translation of the plugin into English.
 
-🟡 13. Стадия пассивной поддержки. / The stage of passive support.
+🟡 13. Серия обучающих видео на ютуб по работе с плагином. / A series of tutorial videos on YouTube on working with the plugin.
+
+🟡 14. Стадия пассивной поддержки. / The stage of passive support.

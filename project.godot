@@ -13,10 +13,17 @@ config_version=5
 config/name="Train API"
 run/main_scene="res://example.tscn"
 config/features=PackedStringArray("4.0", "GL Compatibility")
+config/icon="res://addons/train_api/train_api.jpg"
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/plugin_refresher/plugin.cfg", "res://addons/train_api/plugin.cfg")
+
+[internationalization]
+
+locale/locale_filter_mode=0
+locale/language_filter=["ru"]
+locale/country_filter=["RU"]
 
 [layer_names]
 

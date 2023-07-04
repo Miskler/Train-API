@@ -1,22 +1,31 @@
 [gd_scene load_steps=4 format=3 uid="uid://bjtuqnasublrd"]
 
 [ext_resource type="Script" path="res://addons/train_api/scripts/carriage.gd" id="1_mhbqe"]
-[ext_resource type="Texture2D" uid="uid://c7wp35b5s3b8d" path="res://icon.svg" id="2_aesii"]
+[ext_resource type="Texture2D" uid="uid://cl4p0dakyh3ow" path="res://addons/train_api/resources/texture_02.svg" id="2_62esw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8s04h"]
-size = Vector2(138, 50)
+size = Vector2(100, 50)
 
 [node name="Carriage" type="Area2D"]
 script = ExtResource("1_mhbqe")
 
 [node name="in_train" type="CollisionShape2D" parent="."]
-position = Vector2(69, 0)
+position = Vector2(50, 0)
 shape = SubResource("RectangleShape2D_8s04h")
 
 [node name="icon" type="TextureRect" parent="."]
 offset_top = -25.0
-offset_right = 138.0
+offset_right = 100.0
 offset_bottom = 25.0
 pivot_offset = Vector2(0, 25)
-texture = ExtResource("2_aesii")
+texture = ExtResource("2_62esw")
 expand_mode = 1
+
+[node name="look" type="ColorRect" parent="."]
+visible = false
+offset_left = 123.0
+offset_top = -5.0
+offset_right = 133.0
+offset_bottom = 5.0
+pivot_offset = Vector2(5, 5)
+color = Color(1, 0, 0, 1)
