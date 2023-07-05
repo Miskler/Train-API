@@ -6,9 +6,10 @@ var select_ways:Node = null
 var bottom_gui = preload("scenes/ui.tscn").instantiate()
 func _enter_tree():
 	print("Train API: plugin.gd: START")
+	
 	add_custom_type("Train API", "Node2D", preload("scripts/ways.gd"), preload("resources/train.svg"))
-	add_custom_type("RailWay", "Path2D", preload("scripts/railway.gd"), preload("resources/way.svg"))
-	add_custom_type("Carriage", "Area2D", preload("scripts/carriage.gd"), preload("resources/carriage.svg"))
+	add_custom_type("Rail Way", "Path2D", preload("scripts/railway.gd"), preload("resources/way.svg"))
+	add_custom_type("Carriage Base", "Area2D", preload("scripts/carriage.gd"), preload("resources/carriage.svg"))
 	
 	add_control_to_container(EditorPlugin.CONTAINER_CANVAS_EDITOR_BOTTOM, bottom_gui)
 	_make_visible(false)
@@ -20,8 +21,8 @@ func _enter_tree():
 func _exit_tree():
 	print("Train API: plugin.gd: STOP")
 	remove_custom_type("Train API")
-	remove_custom_type("RailWay")
-	remove_custom_type("Carriage")
+	remove_custom_type("Rail Way")
+	remove_custom_type("Carriage Base")
 	
 	bottom_gui.queue_free()
 func _make_visible(visible):

@@ -58,5 +58,7 @@ popup/item_2/id = 2
 [node name="TextureRect" type="TextureRect" parent="box"]
 layout_mode = 2
 
+[node name="Node3D" type="Node3D" parent="."]
+
 [connection signal="toggled" from="box/edit_or_new" to="." method="edit_or_new_toggled"]
 [connection signal="item_selected" from="box/binding" to="." method="binding_selected"]

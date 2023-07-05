@@ -39,18 +39,20 @@ Not ready.
 
 🟢 6. Система возвращения на исходную ветку при обратном движении во время незаконченного поворота. / The system of returning to the original branch during the reverse movement during an unfinished turn.
 
-🛠️ 7. Система следования вагонов друг за другом *(сцепка/расцепка)*. / The system of cars following each other *(coupling/uncoupling)*
+🛠️ 7. Система "колизии" вагонов друг с другом.
 
-🟡 8. Функция отключения логирования. / The function of disabling logging.
+🟡 8. Система следования вагонов друг за другом *(сцепка/расцепка)*. / The system of cars following each other *(coupling/uncoupling)*
 
-🟡 9. Работа над API *(множество сигналов, переменные-переключатели логики)* для лучшей работы. / Working on the API *(lots of signals, logic switch variables)* for better performance.
+🟡 9. Функция отключения логирования. / The function of disabling logging.
 
-🟡 10. Отладка. / Debugging.
+🟡 10. Работа над API *(множество сигналов, переменные-переключатели логики)* для лучшей работы. / Working on the API *(lots of signals, logic switch variables)* for better performance.
 
-🟡 11. Документирование. / Documentation.
+🟡 11. Отладка. / Debugging.
 
-🟢 12. Перевод плагина на английский. / Translation of the plugin into English.
+🟡 12. Документирование. / Documentation.
 
-🟡 13. Серия обучающих видео на ютуб по работе с плагином. / A series of tutorial videos on YouTube on working with the plugin.
+🟢 13. Перевод плагина на английский. / Translation of the plugin into English.
 
-🟡 14. Стадия пассивной поддержки. / The stage of passive support.
+🟡 14. Серия обучающих видео на ютуб по работе с плагином. / A series of tutorial videos on YouTube on working with the plugin.
+
+🟡 15. Стадия пассивной поддержки. / The stage of passive support.

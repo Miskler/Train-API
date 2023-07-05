@@ -13,7 +13,7 @@ config_version=5
 config/name="Train API"
 run/main_scene="res://example.tscn"
 config/features=PackedStringArray("4.0", "GL Compatibility")
-config/icon="res://addons/train_api/train_api.jpg"
+config/icon="res://train_api.jpg"
 
 [editor_plugins]
 

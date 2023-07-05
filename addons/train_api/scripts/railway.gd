@@ -3,6 +3,9 @@ extends Path2D
 class_name RailWay
 
 
+var cars = []
+
+
 @export var texture:Texture2D = null : 
 	set = tool_texture_set
 func tool_texture_set(textur:Texture2D):
@@ -25,6 +28,26 @@ func tool_connection_zone_set(zone:float):
 		connection_zone = zone
 
 @export var one_sided:bool = false
+
+
+func _enter_tree():
+	if Engine.is_editor_hint() and get_child_count() <= 0:
+		name = "rand_name"
+		
+		var root = get_tree().get_edited_scene_root()
+		
+		var way = load("../scenes/railway.tscn").instantiate()
+		
+		way.texture = texture
+		way.width = width
+		way.connection_zone = connection_zone
+		way.one_sided = one_sided
+		
+		var select_node_spawn = root.get_node(get_parent().get_path())
+		select_node_spawn.add_child(way, true)
+		way.owner = root
+		
+		root.get_node(get_path()).queue_free()
 
 
 func _ready():
@@ -66,6 +89,7 @@ func help_train(pos:float) -> Vector2:
 func length_path() -> float:
 	return curve.get_baked_length()
 
+#Возращают повороты и их позиции
 #Возвращают данные вида [position_fork, [paths], is_begin_fork]
 func get_previous_fork() -> Array:
 	return [0, get_fork_worker($beginning, true), true]

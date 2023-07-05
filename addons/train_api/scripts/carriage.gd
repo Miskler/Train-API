@@ -19,7 +19,6 @@ var real_inverted_path:bool = false
 
 @export var selected_turn:int = 0                 #Выбранный поворот
 
-
 #Поезд может менять свою длину в динамике, но не всегда!
 #1. Нужно чтобы обе части поезда находились на одной дороге
 #2. Чтобы новая длина была минимум 1
@@ -27,10 +26,10 @@ var real_inverted_path:bool = false
 #   ЛИБО
 #1. У вагона сейчас не установлена дорога select_railway
 #2. Чтобы новая длина была минимум 1
-@export var CAR_LENGTH:float = 100 :       #Длина вагона
+@export var CAR_LENGTH:float = 100 :              #Длина вагона
 	set = tool_car_length_reset
 func tool_car_length_reset(new_length:float):
-	if new_length >= 1 and((select_railway == null or real_railway == select_railway) or Engine.is_editor_hint()):
+	if new_length >= 0 and((select_railway == null or real_railway == select_railway) or Engine.is_editor_hint()):
 		var new_pos = new_length
 		if select_railway != null:
 			if select_position_railway >= real_position_railway and real_position_railway+new_length<select_railway.length_path():
@@ -49,8 +48,26 @@ func tool_car_length_reset(new_length:float):
 			$in_train.position.x = new_length/2.0
 			$icon.size.x = new_length
 
+@export var move_node:Node = self                 #Какую ноду он будет двигать по дороге (по умолчанию - себя)
 
-func _ready():
+
+func _enter_tree() -> void:
+	if Engine.is_editor_hint() and get_child_count() <= 0:
+		name = "rand_name"
+		
+		var root = get_tree().get_edited_scene_root()
+		
+		var car = load("../scenes/carriage.tscn").instantiate()
+		
+		var select_node_spawn = root.get_node(get_parent().get_path())
+		
+		select_node_spawn.add_child(car, true)
+		car.owner = root
+		
+		root.get_node(get_path()).queue_free()
+
+
+func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	
 	$look.visible = debug_mode
@@ -60,10 +77,12 @@ func _ready():
 	select_position_railway = CAR_LENGTH
 	if real_railway == select_railway: select_position_railway += real_position_railway
 
-func _physics_process(delta):
+func _physics_process(delta) -> void:
 	if Engine.is_editor_hint(): return
 	
 	var vec = speed * delta
+	
+	printt("SP", str(vec), CAR_LENGTH)
 	
 	if abs(vec) > 50:
 		push_warning("Train API: "+name+": too high speed can affect the quality of calculations!")
@@ -71,24 +90,41 @@ func _physics_process(delta):
 	var indexes = redefinition_railway(vec)
 	
 	if indexes is Array: #Проверяем можем ли двигаться
-		real_position_railway += (vec * (-1 if real_inverted_path else 1))
-		select_position_railway += (vec * (-1 if select_inverted_path else 1))
+		if select_railway == real_railway:
+			printt("ppp a", str(abs(select_position_railway-real_position_railway)))
 		
-		global_position = real_railway.help_train(real_position_railway)
+		real_position_railway += ((vec-indexes[1][1]) * (-1.0 if real_inverted_path else 1.0))
+		select_position_railway += ((vec-indexes[0][1]) * (-1.0 if select_inverted_path else 1.0))
+		
+		if select_railway == real_railway and(indexes[0][1] != 0 or indexes[1][1] != 0):
+			printt("ppp b", str(abs(select_position_railway-real_position_railway)), str(indexes[0][1]), str(indexes[1][1]))
+		
 		if debug_mode:
 			$look.global_position = select_railway.help_train(select_position_railway)-$look.pivot_offset
-		look_at(select_railway.help_train(select_position_railway))
+		
+		if move_node != null:
+			#Такая разбивка нужна чтобы можно было двигать и 3D объекты без лишних проверок
+			var pos = real_railway.help_train(real_position_railway)
+			move_node.global_position.x = pos.x
+			move_node.global_position.y = pos.y
+			
+			var look_pos = select_railway.help_train(select_position_railway)
+			
+			if move_node is Node3D:
+				look_pos = Vector3(look_pos.x, look_pos.y, 0)
+			
+			move_node.look_at(look_pos)
 
 
 func redefinition_railway(vec):
 	#Проверяем данные на корректность
 	if not data_repair(): return -1
 	
-	var vec_to_pos  = vec * (-1 if real_inverted_path   else 1)
-	var vec_to_look = vec * (-1 if select_inverted_path else 1)
+	var vec_to_pos  = vec * (-1.0 if real_inverted_path   else 1.0)
+	var vec_to_look = vec * (-1.0 if select_inverted_path else 1.0)
 	
 	#Запрашиваем возможность поворота для 2 опорных точек вагона
-	var indexes = [checking_turn(real_railway, vec_to_pos, real_position_railway), 
+	var indexes = [checking_turn(real_railway, vec_to_pos, real_position_railway),
 		checking_turn(select_railway, vec_to_look, select_position_railway)]
 	
 	#Останавливаем физику поезда если данные не корректны
@@ -110,57 +146,31 @@ func redefinition_railway(vec):
 			selected_turn = 0
 			print("Train API: "+name+": redefinition_railway() -> selected_turn reset!")
 		
-		var convert = converting_array(fork[1])
 		#Определяем какая точка поворачивает и поворачиваем
 		if indexes[0][2]:
-			if real_railway != select_railway and select_railway in convert:
-				real_railway = select_railway
-				real_inverted_path = select_inverted_path
-			else:
-				real_railway = fork[1][selected_turn][0]
-				real_inverted_path = fork[1][selected_turn][1]
+			var turn_data = turn(real_railway, select_railway, indexes[0][3], real_inverted_path, select_inverted_path, real_position_railway, indexes[0][3][1][selected_turn][1])
 			
-			if fork[1][selected_turn][2]:
-				real_position_railway = real_railway.length_path()
-				
-				#Фиксим погрешность в рассчете при повороте
-				if vec_to_pos >= 0:
-					select_position_railway = select_railway.length_path()-indexes[0][1]
-				else:
-					select_position_railway = indexes[0][1]
-			else:
-				real_position_railway = 0
-				
-				#Фиксим погрешность в рассчете при повороте
-				if vec_to_pos >= 0:
-					select_position_railway = indexes[0][1]
-				else:
-					select_position_railway = indexes[0][1]
+			real_railway = turn_data[0]
+			real_inverted_path = turn_data[1]
+			real_position_railway = turn_data[2]
 			
 			print("Train API: "+name+": redefinition_railway() -> real_railway reconnect to: "+real_railway.name+(" (inverted)" if real_inverted_path else ""))
-		else:
-			if real_railway != select_railway and real_railway in convert:
-				select_railway = real_railway
-				select_inverted_path = real_inverted_path
-			else:
-				select_railway = fork[1][selected_turn][0]
-				select_inverted_path = fork[1][selected_turn][2]
+		if indexes[1][2]:
+			var turn_data = turn(select_railway, real_railway, indexes[1][3], select_inverted_path, real_inverted_path, select_position_railway, indexes[1][3][1][selected_turn][2])
 			
-			if fork[1][selected_turn][2]:
-				select_position_railway = select_railway.length_path()
-			else:
-				select_position_railway = 0
+			select_railway = turn_data[0]
+			select_inverted_path = turn_data[1]
+			select_position_railway = turn_data[2]
 			
 			print("Train API: "+name+": redefinition_railway() -> select_railway reconnect to: "+select_railway.name+(" (inverted)" if select_inverted_path else ""))
 	
 	#Возвращаем итоги вычислений
 	return indexes
-func converting_array(array):
+func converting_array(array) -> Array:
 	var new_array = []
 	for i in array:
 		new_array.append(i[0])
 	return new_array
-
 
 
 func data_repair() -> bool:
@@ -168,16 +178,18 @@ func data_repair() -> bool:
 	if select_railway == null and real_railway != null:   #Если объект на котором находимся не указан
 		select_railway = real_railway #Фиксим
 		print("Train API: "+name+": data_repair() -> select_railway = real_railway")
+		railway_reselect(select_railway, real_railway)
 	elif select_railway != null and real_railway == null: #Если объект за которым смотрим не указан
 		real_railway = select_railway #Фиксим
 		print("Train API: "+name+": data_repair() -> real_railway = select_railway")
+		railway_reselect(select_railway, real_railway)
 	elif select_railway == null and real_railway == null: #Если никакая из дорог не указана
 		print("Train API: "+name+": data_repair() -> ERROR")
 		return false #Двигаться НЕ можем
 	return true
 
 #Определяет когда нужно поворачивать и куда
-func checking_turn(select_way:Node, vec:float, pos:float):
+func checking_turn(select_way:Node, vec:float, pos:float) -> Array:
 	#Получаем следующий поворот и определяем нужно ли поворачивать в этом кадре
 	var index = [0, 0, false] #Движение до поворота, движение после поворота, нужно ли поворачивать
 	var fork:Array = []
@@ -187,9 +199,9 @@ func checking_turn(select_way:Node, vec:float, pos:float):
 		#Нужно ли поворачивать в этом кадре
 		if (fork[0] > pos and pos+vec > fork[0]) or (pos+vec) > select_way.length_path():
 			#Разница между вагоном и распутьем
-			index = [0, 0, true, fork] #2000 - 1750 = 250
-			index[0] = fork[0]-pos #Расстояние точки до поворота
-			index[1] = CAR_LENGTH-index[0] #Длина вагона - расстояние до поворота
+			index = [0, 0, true, fork]
+			index[0] = fork[0]-pos #Расстояние точки до поворота                #2000 - 1750 = 250
+			index[1] = vec-index[0] #Длина вагона - расстояние до поворота      #300 - 250 = 50
 	else: #Поезд едет назад
 		fork = select_way.get_previous_fork()
 		
@@ -197,6 +209,41 @@ func checking_turn(select_way:Node, vec:float, pos:float):
 		if (fork[0] < pos and pos+vec < fork[0]) or (pos+vec) < 0:
 			#Разница между вагоном и распутьем
 			index = [0, 0, true, fork]
-			index[0] = pos-fork[0] #Расстояние точки до поворота
-			index[1] = CAR_LENGTH-index[0] #Длина вагона - расстояние до поворота
+			index[0] = pos-fork[0] #Расстояние точки до поворота                #140 - 0 = 140
+			index[1] = vec+index[0] #Длина вагона - расстояние до поворота      #-300+140 = -160
 	return index
+
+func turn(one:RailWay, two:RailWay, fork:Array, one_invert:bool, two_invert:bool, one_pos:float, invert:bool):
+	var convert = converting_array(fork[1])
+	if one != two and two in convert:
+		one = two
+		one_invert = two_invert
+	else:
+		one = fork[1][selected_turn][0]
+		one_invert = invert
+	
+	if fork[1][selected_turn][2]:
+		one_pos = one.length_path()
+	else:
+		one_pos = 0
+	
+	return [one, one_invert, one_pos]
+
+
+#Вызывать ДО переопределения переменных
+#Синхронизирует данные о положении с дорогами
+#Нужно для "коллизии" поездов друг с другом
+func railway_reselect(select_new_railway:RailWay, real_new_railway:RailWay) -> void:
+	if not self in select_new_railway.cars:
+		select_new_railway.cars.append(self)
+		print("Train API: "+name+": railway_reselect() -> select_railway \""+str(select_new_railway.name)+"\" append")
+	if not self in real_new_railway.cars:
+		real_new_railway.cars.append(self)
+		print("Train API: "+name+": railway_reselect() -> real_railway \""+str(real_new_railway.name)+"\" append")
+	
+	if not select_railway in [null, select_new_railway]:
+		select_railway.cars.erase(self)
+		print("Train API: "+name+": railway_reselect() -> select_railway \""+str(select_railway.name)+"\" erase")
+	if not real_railway in [null, real_new_railway]:
+		real_railway.cars.erase(self)
+		print("Train API: "+name+": railway_reselect() -> real_railway \""+str(real_railway.name)+"\" erase")
