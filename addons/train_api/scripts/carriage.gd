@@ -82,7 +82,7 @@ func _physics_process(delta) -> void:
 	
 	var vec = speed * delta
 	
-	printt("SP", str(vec), CAR_LENGTH)
+	#printt("SP", str(vec), CAR_LENGTH)
 	
 	if abs(vec) > 50:
 		push_warning("Train API: "+name+": too high speed can affect the quality of calculations!")
@@ -90,11 +90,13 @@ func _physics_process(delta) -> void:
 	var indexes = redefinition_railway(vec)
 	
 	if indexes is Array: #Проверяем можем ли двигаться
-		if select_railway == real_railway:
-			printt("ppp a", str(abs(select_position_railway-real_position_railway)))
+		if (indexes[0][1] != 0 or indexes[1][1] != 0):
+			print("")
+			printt("ppp a", str(vec)+" - "+str(indexes[0][1])+" = "+str(vec-indexes[0][1]))
+			printt("ppp a", str(vec)+" - "+str(indexes[1][1])+" = "+str(vec-indexes[1][1]))
 		
-		real_position_railway += ((vec-indexes[1][1]) * (-1.0 if real_inverted_path else 1.0))
-		select_position_railway += ((vec-indexes[0][1]) * (-1.0 if select_inverted_path else 1.0))
+		real_position_railway += ((vec-indexes[0][1]) * (-1.0 if real_inverted_path else 1.0))
+		select_position_railway += ((vec-indexes[1][1]) * (-1.0 if select_inverted_path else 1.0))
 		
 		if select_railway == real_railway and(indexes[0][1] != 0 or indexes[1][1] != 0):
 			printt("ppp b", str(abs(select_position_railway-real_position_railway)), str(indexes[0][1]), str(indexes[1][1]))
@@ -189,7 +191,7 @@ func data_repair() -> bool:
 	return true
 
 #Определяет когда нужно поворачивать и куда
-func checking_turn(select_way:Node, vec:float, pos:float) -> Array:
+func checking_turn(select_way:RailWay, vec:float, pos:float) -> Array:
 	#Получаем следующий поворот и определяем нужно ли поворачивать в этом кадре
 	var index = [0, 0, false] #Движение до поворота, движение после поворота, нужно ли поворачивать
 	var fork:Array = []
@@ -201,7 +203,7 @@ func checking_turn(select_way:Node, vec:float, pos:float) -> Array:
 			#Разница между вагоном и распутьем
 			index = [0, 0, true, fork]
 			index[0] = fork[0]-pos #Расстояние точки до поворота                #2000 - 1750 = 250
-			index[1] = vec-index[0] #Длина вагона - расстояние до поворота      #300 - 250 = 50
+			index[1] = vec-index[0] #Скорость-расстояние до точки расстояние    #300 - 250 = 50
 	else: #Поезд едет назад
 		fork = select_way.get_previous_fork()
 		
@@ -209,11 +211,11 @@ func checking_turn(select_way:Node, vec:float, pos:float) -> Array:
 		if (fork[0] < pos and pos+vec < fork[0]) or (pos+vec) < 0:
 			#Разница между вагоном и распутьем
 			index = [0, 0, true, fork]
-			index[0] = pos-fork[0] #Расстояние точки до поворота                #140 - 0 = 140
-			index[1] = vec+index[0] #Длина вагона - расстояние до поворота      #-300+140 = -160
+			index[0] = pos-fork[0] #Расстояние точки до поворота                  #140 - 0 = 140
+			index[1] = abs(vec)+index[0] #Скорость-расстояние до точки расстояние #-300+140 = -160
 	return index
 
-func turn(one:RailWay, two:RailWay, fork:Array, one_invert:bool, two_invert:bool, one_pos:float, invert:bool):
+func turn(one:RailWay, two:RailWay, fork:Array, one_invert:bool, two_invert:bool, one_pos:float, invert:bool) -> Array:
 	var convert = converting_array(fork[1])
 	if one != two and two in convert:
 		one = two
