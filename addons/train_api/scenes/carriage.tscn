@@ -29,3 +29,6 @@ offset_right = 133.0
 offset_bottom = 5.0
 pivot_offset = Vector2(5, 5)
 color = Color(1, 0, 0, 1)
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true

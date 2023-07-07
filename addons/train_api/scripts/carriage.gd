@@ -11,7 +11,9 @@ var select_inverted_path:bool = false
 @export var real_position_railway:float = 0.0     #Позиция на отрезке
 var real_inverted_path:bool = false
 
+##Привет
 @export var debug_mode:bool = false               #Режим отладки
+@export var safe_mode:bool = true
 
 
 @export_category("Move")
@@ -26,7 +28,7 @@ var real_inverted_path:bool = false
 #   ЛИБО
 #1. У вагона сейчас не установлена дорога select_railway
 #2. Чтобы новая длина была минимум 1
-@export var CAR_LENGTH:float = 100 :              #Длина вагона
+@export var CAR_LENGTH:int = 100 :              #Длина вагона
 	set = tool_car_length_reset
 func tool_car_length_reset(new_length:float):
 	if new_length >= 0 and((select_railway == null or real_railway == select_railway) or Engine.is_editor_hint()):
@@ -82,7 +84,8 @@ func _physics_process(delta) -> void:
 	
 	var vec = speed * delta
 	
-	#printt("SP", str(vec), CAR_LENGTH)
+	if safe_mode and abs(vec) >= CAR_LENGTH:
+		vec = clamp(vec, -(CAR_LENGTH-1), (CAR_LENGTH-1))
 	
 	if abs(vec) > 50:
 		push_warning("Train API: "+name+": too high speed can affect the quality of calculations!")
@@ -90,16 +93,11 @@ func _physics_process(delta) -> void:
 	var indexes = redefinition_railway(vec)
 	
 	if indexes is Array: #Проверяем можем ли двигаться
-		if (indexes[0][1] != 0 or indexes[1][1] != 0):
-			print("")
-			printt("ppp a", str(vec)+" - "+str(indexes[0][1])+" = "+str(vec-indexes[0][1]))
-			printt("ppp a", str(vec)+" - "+str(indexes[1][1])+" = "+str(vec-indexes[1][1]))
+		var index_r = (-1.0 if real_inverted_path   else 1.0)
+		var index_l = (-1.0 if select_inverted_path else 1.0)
 		
-		real_position_railway += ((vec-indexes[0][1]) * (-1.0 if real_inverted_path else 1.0))
-		select_position_railway += ((vec-indexes[1][1]) * (-1.0 if select_inverted_path else 1.0))
-		
-		if select_railway == real_railway and(indexes[0][1] != 0 or indexes[1][1] != 0):
-			printt("ppp b", str(abs(select_position_railway-real_position_railway)), str(indexes[0][1]), str(indexes[1][1]))
+		real_position_railway   += round((vec-indexes[0][0]) * index_r)
+		select_position_railway += round((vec-indexes[1][0]) * index_l)
 		
 		if debug_mode:
 			$look.global_position = select_railway.help_train(select_position_railway)-$look.pivot_offset
@@ -156,6 +154,24 @@ func redefinition_railway(vec):
 			real_inverted_path = turn_data[1]
 			real_position_railway = turn_data[2]
 			
+			if safe_mode and select_railway == real_railway:
+				if fork[1][selected_turn][2]:
+					real_position_railway = real_railway.length_path()
+					
+					#Фиксим погрешность в рассчете при повороте
+					if vec_to_pos >= 0:
+						select_position_railway = select_railway.length_path()-indexes[0][1]
+					else:
+						select_position_railway = indexes[0][1]
+				else:
+					real_position_railway = 0
+					
+					#Фиксим погрешность в рассчете при повороте
+					if vec_to_pos >= 0:
+						select_position_railway = indexes[0][1]
+					else:
+						select_position_railway = indexes[0][1]
+			
 			print("Train API: "+name+": redefinition_railway() -> real_railway reconnect to: "+real_railway.name+(" (inverted)" if real_inverted_path else ""))
 		if indexes[1][2]:
 			var turn_data = turn(select_railway, real_railway, indexes[1][3], select_inverted_path, real_inverted_path, select_position_railway, indexes[1][3][1][selected_turn][2])
@@ -199,20 +215,20 @@ func checking_turn(select_way:RailWay, vec:float, pos:float) -> Array:
 		fork = select_way.get_next_fork()
 		
 		#Нужно ли поворачивать в этом кадре
-		if (fork[0] > pos and pos+vec > fork[0]) or (pos+vec) > select_way.length_path():
+		if (fork[0] > pos and pos+vec > fork[0]) or (pos+vec) > select_way.length_path() or (pos+vec) < 0:
 			#Разница между вагоном и распутьем
 			index = [0, 0, true, fork]
-			index[0] = fork[0]-pos #Расстояние точки до поворота                #2000 - 1750 = 250
-			index[1] = vec-index[0] #Скорость-расстояние до точки расстояние    #300 - 250 = 50
+			index[0] = -(fork[0]-pos) #Расстояние точки до поворота
+			index[1] = CAR_LENGTH-(index[0]*-1) #Длина вагона - расстояние до поворота
 	else: #Поезд едет назад
 		fork = select_way.get_previous_fork()
 		
 		#Нужно ли поворачивать в этом кадре
-		if (fork[0] < pos and pos+vec < fork[0]) or (pos+vec) < 0:
+		if (fork[0] < pos and pos+vec < fork[0]) or (pos+vec) > select_way.length_path() or (pos+vec) < 0:
 			#Разница между вагоном и распутьем
 			index = [0, 0, true, fork]
-			index[0] = pos-fork[0] #Расстояние точки до поворота                  #140 - 0 = 140
-			index[1] = abs(vec)+index[0] #Скорость-расстояние до точки расстояние #-300+140 = -160
+			index[0] = pos-fork[0] #Расстояние точки до поворота
+			index[1] = CAR_LENGTH-index[0] #Длина вагона - расстояние до поворота
 	return index
 
 func turn(one:RailWay, two:RailWay, fork:Array, one_invert:bool, two_invert:bool, one_pos:float, invert:bool) -> Array:

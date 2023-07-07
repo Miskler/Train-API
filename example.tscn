@@ -101,7 +101,7 @@ width = 5.0
 position = Vector2(-321, -103)
 select_railway = NodePath("../Train API/railway")
 debug_mode = true
-speed = 0.0
+speed = 10.0
 selected_turn = 1
 
 [connection signal="value_changed" from="Camera2D/interface/full/control_speed" to="Camera2D/interface" method="value_changed"]
