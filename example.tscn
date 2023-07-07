@@ -99,6 +99,7 @@ width = 5.0
 
 [node name="Carriage" parent="." instance=ExtResource("5_5yyyn")]
 position = Vector2(-321, -103)
+debug_mode = false
 speed = 10.0
 selected_turn = 1
 

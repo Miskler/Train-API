@@ -11,9 +11,9 @@ This plugin provides basic tools for creating, editing, configuring roads in you
 
 
 ## Документация / Documentation
-Не готова.
+На данный момент документация выполнена при помощи возможностей движка. Планируется продублировать документация на веб сайт.
 
-Not ready.
+At the moment, the documentation is done using the capabilities of the engine *(only on Russian)*. It is planned to duplicate the documentation on the website.
 
 
 ## Контакты / Contacts

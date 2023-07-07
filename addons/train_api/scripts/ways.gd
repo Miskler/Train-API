@@ -21,12 +21,12 @@ class_name TrainAPI
 @export var template_one_sided:bool = false
 
 ##Правила действующие в пределах этой группы дорог.
-@export_category("Rules")
+#@export_category("Rules")
 
 ##Включает/отключает столкновение вагонов друг с другом.
 ##Если отключено вагоны будут проходить насквозь.
 ##При отключении, службы связанные с коллизией остаются доступны.
-@export var collision:bool = true
+#@export var collision:bool = true
 
 ##Зона рядом с позицией поезда где он останавливает другие вагоны.
-@export var collision_distance:float = 10
+#@export var collision_distance:float = 10
