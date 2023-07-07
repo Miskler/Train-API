@@ -97,10 +97,8 @@ position = Vector2(425.411, -351.205)
 curve = SubResource("Curve2D_odiuq")
 width = 5.0
 
-[node name="Carriage" parent="." node_paths=PackedStringArray("select_railway") instance=ExtResource("5_5yyyn")]
+[node name="Carriage" parent="." instance=ExtResource("5_5yyyn")]
 position = Vector2(-321, -103)
-select_railway = NodePath("../Train API/railway")
-debug_mode = true
 speed = 10.0
 selected_turn = 1
 

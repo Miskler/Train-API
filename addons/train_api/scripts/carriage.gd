@@ -1,25 +1,55 @@
 @tool
 extends Area2D
+##Вагон - это нода способная передвигаться по дороге.
+##Обрабатывает движение, логика может быть расширенна при помощи связанных скриптов.
+##Она может двигать сама себя, либо передвигать 2D, 3D или Control наследованные ноды.
 class_name Carriage
 
 
-@export var select_railway:RailWay = null         #То в сторону чего поезд поворачивается
-var select_position_railway:float = CAR_LENGTH    #Позиция на отрезке
+##На какую дорогу "смотрит" вагон.
+var select_railway:RailWay = null
+
+##На какую точку дороги "смотрит" вагон.
+var select_position_railway:float = CAR_LENGTH
+
+##Техническая переменная.
+##Инвертирует скорость чтобы вагон мог сохранять направление движения не зависимо от направления дороги.
 var select_inverted_path:bool = false
 
-@export var real_railway:RailWay = null           #То, где он находится
-@export var real_position_railway:float = 0.0     #Позиция на отрезке
+##На какую дорогу установлен вагон.
+@export var real_railway:RailWay = null
+
+##Начальная позиция вагона на этой дороге.
+@export var real_position_railway:float = 0.0
+
+##Техническая переменная.
+##Инвертирует скорость чтобы поезд мог сохранять направление движения не зависимо от направления дороги.
 var real_inverted_path:bool = false
 
-##Привет
-@export var debug_mode:bool = false               #Режим отладки
+##Режим отладки показывает куда смотрит вагон, а так же сам вагон.
+@export var debug_mode:bool = false :
+	set = tool_debug_mode_reset
+func tool_debug_mode_reset(mode:bool):
+	if get_node_or_null("icon") != null:
+		$icon.visible = mode
+		$look.visible = mode
+		
+		debug_mode = mode
+
+##В этом состоянии вагон автоматически попытается сохранить установленную длину.
+##Это реализовано через ограничение скорости длиной вагона (скорость не может быть выше чем длина вагона).
+##А так же при окончании поворота вагон пересчитает свою длину и устранит погрешность.
 @export var safe_mode:bool = true
 
-
+##Категория переменных управляющих движением поезда.
 @export_category("Move")
-@export var speed:float = 1.0                     #Скорость и направление движения
 
-@export var selected_turn:int = 0                 #Выбранный поворот
+##Скорость и направление движения.
+@export var speed:float = 1.0
+
+##Выбранный поворот. Если его не существует будет выбран "0".
+@export var selected_turn:int = 0
+
 
 #Поезд может менять свою длину в динамике, но не всегда!
 #1. Нужно чтобы обе части поезда находились на одной дороге
@@ -28,6 +58,8 @@ var real_inverted_path:bool = false
 #   ЛИБО
 #1. У вагона сейчас не установлена дорога select_railway
 #2. Чтобы новая длина была минимум 1
+
+##Длина вагона. Вагон может менять длину в динамике с соблюдением некоторых условий. Смотри полное описание в скрипте!
 @export var CAR_LENGTH:int = 100 :              #Длина вагона
 	set = tool_car_length_reset
 func tool_car_length_reset(new_length:float):
@@ -50,7 +82,9 @@ func tool_car_length_reset(new_length:float):
 			$in_train.position.x = new_length/2.0
 			$icon.size.x = new_length
 
-@export var move_node:Node = self                 #Какую ноду он будет двигать по дороге (по умолчанию - себя)
+##Какую ноду вагон будет двигать по дороге (по умолчанию - себя).
+##Он может двигать сам себя, либо передвигать 2D, 3D или Control наследованные ноды.
+@export var move_node:Node = self
 
 
 func _enter_tree() -> void:
@@ -73,9 +107,13 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	
 	$look.visible = debug_mode
+	$icon.visible = debug_mode
 	
 	$in_train.shape = $in_train.shape.duplicate()
+	
 	tool_car_length_reset(CAR_LENGTH)
+	tool_debug_mode_reset(debug_mode)
+	
 	select_position_railway = CAR_LENGTH
 	if real_railway == select_railway: select_position_railway += real_position_railway
 
@@ -115,8 +153,10 @@ func _physics_process(delta) -> void:
 			
 			move_node.look_at(look_pos)
 
-
-func redefinition_railway(vec):
+##Основная функция вагона. 
+##Обрабатывает повороты и возращает массив данных требуемых для рассчетов движения.
+##Если по каким-то причинам движение не возможно возвращает -1.
+func redefinition_railway(vec:float):
 	#Проверяем данные на корректность
 	if not data_repair(): return -1
 	
@@ -167,10 +207,7 @@ func redefinition_railway(vec):
 					real_position_railway = 0
 					
 					#Фиксим погрешность в рассчете при повороте
-					if vec_to_pos >= 0:
-						select_position_railway = indexes[0][1]
-					else:
-						select_position_railway = indexes[0][1]
+					select_position_railway = indexes[0][1]
 			
 			print("Train API: "+name+": redefinition_railway() -> real_railway reconnect to: "+real_railway.name+(" (inverted)" if real_inverted_path else ""))
 		if indexes[1][2]:
@@ -180,17 +217,26 @@ func redefinition_railway(vec):
 			select_inverted_path = turn_data[1]
 			select_position_railway = turn_data[2]
 			
+			if safe_mode and select_railway == real_railway:
+				if fork[1][selected_turn][2]:
+					select_position_railway = real_position_railway+CAR_LENGTH
+				else:
+					select_position_railway = real_position_railway-CAR_LENGTH
+			
 			print("Train API: "+name+": redefinition_railway() -> select_railway reconnect to: "+select_railway.name+(" (inverted)" if select_inverted_path else ""))
 	
 	#Возвращаем итоги вычислений
 	return indexes
+
+##Небольшая функция.
+##Конвертирует данные в удобный формат для применения их в redefinition_railway()
 func converting_array(array) -> Array:
 	var new_array = []
 	for i in array:
 		new_array.append(i[0])
 	return new_array
 
-
+##Восстанавливает некоторые данные на основе имеющихся. Возращает bool корректны ли данные или нет.
 func data_repair() -> bool:
 	#Подготовка переменных
 	if select_railway == null and real_railway != null:   #Если объект на котором находимся не указан
@@ -206,7 +252,8 @@ func data_repair() -> bool:
 		return false #Двигаться НЕ можем
 	return true
 
-#Определяет когда нужно поворачивать и куда
+##Определяет когда нужно поворачивать и куда.
+#Возращает данные вида [подавляющий_индекс, восстанавливающий_индекс, нужно_ли_поворачивать].
 func checking_turn(select_way:RailWay, vec:float, pos:float) -> Array:
 	#Получаем следующий поворот и определяем нужно ли поворачивать в этом кадре
 	var index = [0, 0, false] #Движение до поворота, движение после поворота, нужно ли поворачивать
@@ -231,26 +278,28 @@ func checking_turn(select_way:RailWay, vec:float, pos:float) -> Array:
 			index[1] = CAR_LENGTH-index[0] #Длина вагона - расстояние до поворота
 	return index
 
-func turn(one:RailWay, two:RailWay, fork:Array, one_invert:bool, two_invert:bool, one_pos:float, invert:bool) -> Array:
+##Совершает повороты опорных точек поезда.
+##Возвращает итоги вычислений которые нужно присвоить нужным переменным.
+func turn(one:RailWay, two:RailWay, fork:Array, one_invert:bool, two_invert:bool, one_position:float, rail_invert:bool) -> Array:
 	var convert = converting_array(fork[1])
 	if one != two and two in convert:
 		one = two
 		one_invert = two_invert
 	else:
 		one = fork[1][selected_turn][0]
-		one_invert = invert
+		one_invert = rail_invert
 	
 	if fork[1][selected_turn][2]:
-		one_pos = one.length_path()
+		one_position = one.length_path()
 	else:
-		one_pos = 0
+		one_position = 0
 	
-	return [one, one_invert, one_pos]
+	return [one, one_invert, one_position]
 
 
-#Вызывать ДО переопределения переменных
-#Синхронизирует данные о положении с дорогами
-#Нужно для "коллизии" поездов друг с другом
+##Вызывать ДО переопределения переменных.
+##Синхронизирует данные о положении с дорогами.
+##Нужно для "коллизии" поездов друг с другом.
 func railway_reselect(select_new_railway:RailWay, real_new_railway:RailWay) -> void:
 	if not self in select_new_railway.cars:
 		select_new_railway.cars.append(self)
