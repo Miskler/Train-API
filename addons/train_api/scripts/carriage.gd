@@ -33,8 +33,7 @@ func tool_debug_mode_reset(mode:bool):
 	if get_node_or_null("icon") != null:
 		$icon.visible = mode
 		$look.visible = mode
-		
-		debug_mode = mode
+	debug_mode = mode
 
 ##В этом состоянии вагон автоматически попытается сохранить установленную длину.
 ##Это реализовано через ограничение скорости длиной вагона (скорость не может быть выше чем длина вагона).
@@ -122,20 +121,13 @@ func _physics_process(delta) -> void:
 	
 	var vec = speed * delta
 	
-	if safe_mode and abs(vec) >= CAR_LENGTH:
-		vec = clamp(vec, -(CAR_LENGTH-1), (CAR_LENGTH-1))
-	
 	if abs(vec) > 50:
 		push_warning("Train API: "+name+": too high speed can affect the quality of calculations!")
 	
 	var indexes = redefinition_railway(vec)
 	
 	if indexes is Array: #Проверяем можем ли двигаться
-		var index_r = (-1.0 if real_inverted_path   else 1.0)
-		var index_l = (-1.0 if select_inverted_path else 1.0)
-		
-		real_position_railway   += round((vec-indexes[0][0]) * index_r)
-		select_position_railway += round((vec-indexes[1][0]) * index_l)
+		move(vec, indexes)
 		
 		if debug_mode:
 			$look.global_position = select_railway.help_train(select_position_railway)-$look.pivot_offset
@@ -152,6 +144,17 @@ func _physics_process(delta) -> void:
 				look_pos = Vector3(look_pos.x, look_pos.y, 0)
 			
 			move_node.look_at(look_pos)
+	elif indexes == 0:
+		move(vec, [[0], [0]])
+
+func move(vec:float, indexes:Array):
+	var real_move = round((vec-indexes[0][0]) * (-1.0 if real_inverted_path else 1.0))
+	var select_move = round((vec-indexes[1][0]) * (-1.0 if select_inverted_path else 1.0))
+	
+	if (real_position_railway <= real_railway.length_path() and real_move >= 0) or (real_position_railway >= 0 and real_move <= 0):
+		real_position_railway = clamp(real_move+real_position_railway, 0, real_railway.length_path())
+	if (select_position_railway <= select_railway.length_path() and select_move >= 0) or (select_position_railway >= 0 and select_move <= 0):
+		select_position_railway = clamp(select_move+select_position_railway, 0, select_railway.length_path())
 
 ##Основная функция вагона. 
 ##Обрабатывает повороты и возращает массив данных требуемых для рассчетов движения.
@@ -173,6 +176,7 @@ func redefinition_railway(vec:float):
 	
 	#Если одна из опорных точек готова к повороту
 	if indexes[0][2] or indexes[1][2]:
+		printt("KLK", indexes[0][2], indexes[1][2])
 		#Определяем какая точка готова поворачивать
 		var fork = []
 		if indexes[0][2]: fork = indexes[0][3]
@@ -181,13 +185,48 @@ func redefinition_railway(vec:float):
 		#Удостоверяемся, что ссылаемся на существующий поворот
 		if fork[1].size() == 0:
 			print("Train API: "+name+": redefinition_railway() -> ERROR! NOT FORKS!")
-			return -1
+			return 0
 		elif fork[1].size() <= selected_turn:
 			selected_turn = 0
 			print("Train API: "+name+": redefinition_railway() -> selected_turn reset!")
 		
 		#Определяем какая точка поворачивает и поворачиваем
-		if indexes[0][2]:
+		if indexes[0][2] and indexes[1][2]:
+			indexes[0][0] = 0
+			indexes[1][0] = 0
+			
+			var l = select_railway
+			select_railway = fork[1][selected_turn][0]
+			real_railway = fork[1][selected_turn][0]
+			
+			var inv = indexes[1][3][1][selected_turn]
+			if vec >= 0:
+				printt("KLK A")
+				select_inverted_path = inv[2]
+				real_inverted_path = inv[2]
+				
+				if fork[1][selected_turn][2]:
+					printt("KLK A A", l == select_railway, fork[1])
+					select_position_railway = select_railway.length_path()-CAR_LENGTH
+					real_position_railway = real_railway.length_path()
+				else:
+					printt("KLK A B", l == select_railway, fork[1])
+					select_position_railway = 0
+					real_position_railway = CAR_LENGTH
+			else:
+				printt("KLK B")
+				select_inverted_path = inv[1]
+				real_inverted_path = inv[1]
+				
+				if fork[1][selected_turn][2]:
+					printt("KLK B A")
+					select_position_railway = select_railway.length_path()
+					real_position_railway = real_railway.length_path()-CAR_LENGTH
+				else:
+					printt("KLK B B")
+					select_position_railway = CAR_LENGTH
+					real_position_railway = 0
+		elif indexes[0][2]:
 			var turn_data = turn(real_railway, select_railway, indexes[0][3], real_inverted_path, select_inverted_path, real_position_railway, indexes[0][3][1][selected_turn][1])
 			
 			real_railway = turn_data[0]
@@ -210,7 +249,7 @@ func redefinition_railway(vec:float):
 					select_position_railway = indexes[0][1]
 			
 			print("Train API: "+name+": redefinition_railway() -> real_railway reconnect to: "+real_railway.name+(" (inverted)" if real_inverted_path else ""))
-		if indexes[1][2]:
+		elif indexes[1][2]:
 			var turn_data = turn(select_railway, real_railway, indexes[1][3], select_inverted_path, real_inverted_path, select_position_railway, indexes[1][3][1][selected_turn][2])
 			
 			select_railway = turn_data[0]

@@ -20,7 +20,7 @@ point_count = 9
 
 [sub_resource type="Curve2D" id="Curve2D_odiuq"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -41.411, 711.205, 0, 0, 0, 0, -1.41101, -0.795013)
+"points": PackedVector2Array(0, 0, 0, 0, -35, 739, 0, 0, 0, 0, 3, 26)
 }
 point_count = 2
 
@@ -38,6 +38,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 5.0
+offset_bottom = 5.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -93,13 +95,13 @@ texture = ExtResource("4_mtbfk")
 width = 20.0
 
 [node name="railway3" parent="Train API" instance=ExtResource("2_rbcdh")]
-position = Vector2(425.411, -351.205)
+position = Vector2(420, -379)
 curve = SubResource("Curve2D_odiuq")
 width = 5.0
 
-[node name="Carriage" parent="." instance=ExtResource("5_5yyyn")]
+[node name="Carriage" parent="." node_paths=PackedStringArray("real_railway") instance=ExtResource("5_5yyyn")]
 position = Vector2(-321, -103)
-debug_mode = false
+real_railway = NodePath("../Train API/railway")
 speed = 10.0
 selected_turn = 1
 
