@@ -20,9 +20,9 @@ point_count = 9
 
 [sub_resource type="Curve2D" id="Curve2D_odiuq"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -35, 739, 0, 0, 0, 0, 3, 26)
+"points": PackedVector2Array(0, 0, 0, 0, -37, 738, 0, 0, 0, 0, -48, 705, 0, 0, 0, 0, 3, 26)
 }
-point_count = 2
+point_count = 3
 
 [node name="world" type="Node2D"]
 
@@ -54,7 +54,7 @@ grow_horizontal = 2
 grow_vertical = 0
 min_value = -100.0
 
-[node name="control_speed2" type="HSlider" parent="Camera2D/interface/full"]
+[node name="control_size" type="HSlider" parent="Camera2D/interface/full"]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -99,11 +99,11 @@ position = Vector2(420, -379)
 curve = SubResource("Curve2D_odiuq")
 width = 5.0
 
-[node name="Carriage" parent="." node_paths=PackedStringArray("real_railway") instance=ExtResource("5_5yyyn")]
+[node name="Carriage" parent="." node_paths=PackedStringArray("real_railway", "move_node") instance=ExtResource("5_5yyyn")]
 position = Vector2(-321, -103)
-real_railway = NodePath("../Train API/railway")
+real_railway = NodePath("../Train API/railway2")
 speed = 10.0
-selected_turn = 1
+move_node = NodePath(".")
 
 [connection signal="value_changed" from="Camera2D/interface/full/control_speed" to="Camera2D/interface" method="value_changed"]
-[connection signal="value_changed" from="Camera2D/interface/full/control_speed2" to="Camera2D/interface" method="_on_control_speed_2_value_changed"]
+[connection signal="value_changed" from="Camera2D/interface/full/control_size" to="Camera2D/interface" method="_on_control_speed_2_value_changed"]

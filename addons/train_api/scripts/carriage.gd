@@ -176,7 +176,6 @@ func redefinition_railway(vec:float):
 	
 	#Если одна из опорных точек готова к повороту
 	if indexes[0][2] or indexes[1][2]:
-		printt("KLK", indexes[0][2], indexes[1][2])
 		#Определяем какая точка готова поворачивать
 		var fork = []
 		if indexes[0][2]: fork = indexes[0][3]
@@ -192,25 +191,33 @@ func redefinition_railway(vec:float):
 		
 		#Определяем какая точка поворачивает и поворачиваем
 		if indexes[0][2] and indexes[1][2]:
+			printt("KLK", indexes[0][2], indexes[1][2])
+			
 			indexes[0][0] = 0
 			indexes[1][0] = 0
 			
-			var l = select_railway
+			#var l = select_railway
+			#var r = real_railway
+			
+			var inv = indexes[1][3][1][selected_turn]
+			#if fork[1][selected_turn][0] == select_railway:
+			#	fork = indexes[1][3]
+			#	inv = indexes[0][3][1][selected_turn]
+			
 			select_railway = fork[1][selected_turn][0]
 			real_railway = fork[1][selected_turn][0]
 			
-			var inv = indexes[1][3][1][selected_turn]
 			if vec >= 0:
 				printt("KLK A")
 				select_inverted_path = inv[2]
 				real_inverted_path = inv[2]
 				
 				if fork[1][selected_turn][2]:
-					printt("KLK A A", l == select_railway, fork[1])
+					#printt("KLK A A", l == select_railway, r == real_railway, fork[1])
 					select_position_railway = select_railway.length_path()-CAR_LENGTH
 					real_position_railway = real_railway.length_path()
 				else:
-					printt("KLK A B", l == select_railway, fork[1])
+					#printt("KLK A B", l == select_railway, fork[1])
 					select_position_railway = 0
 					real_position_railway = CAR_LENGTH
 			else:
@@ -227,13 +234,15 @@ func redefinition_railway(vec:float):
 					select_position_railway = CAR_LENGTH
 					real_position_railway = 0
 		elif indexes[0][2]:
+			var equal = true if select_railway == real_railway else false
+			
 			var turn_data = turn(real_railway, select_railway, indexes[0][3], real_inverted_path, select_inverted_path, real_position_railway, indexes[0][3][1][selected_turn][1])
 			
 			real_railway = turn_data[0]
 			real_inverted_path = turn_data[1]
 			real_position_railway = turn_data[2]
 			
-			if safe_mode and select_railway == real_railway:
+			if safe_mode and select_railway == real_railway and not equal:
 				if fork[1][selected_turn][2]:
 					real_position_railway = real_railway.length_path()
 					
@@ -250,13 +259,16 @@ func redefinition_railway(vec:float):
 			
 			print("Train API: "+name+": redefinition_railway() -> real_railway reconnect to: "+real_railway.name+(" (inverted)" if real_inverted_path else ""))
 		elif indexes[1][2]:
+			print(1)
+			var equal = true if select_railway == real_railway else false
+			
 			var turn_data = turn(select_railway, real_railway, indexes[1][3], select_inverted_path, real_inverted_path, select_position_railway, indexes[1][3][1][selected_turn][2])
 			
 			select_railway = turn_data[0]
 			select_inverted_path = turn_data[1]
 			select_position_railway = turn_data[2]
 			
-			if safe_mode and select_railway == real_railway:
+			if safe_mode and select_railway == real_railway and not equal:
 				if fork[1][selected_turn][2]:
 					select_position_railway = real_position_railway+CAR_LENGTH
 				else:
@@ -321,7 +333,7 @@ func checking_turn(select_way:RailWay, vec:float, pos:float) -> Array:
 ##Возвращает итоги вычислений которые нужно присвоить нужным переменным.
 func turn(one:RailWay, two:RailWay, fork:Array, one_invert:bool, two_invert:bool, one_position:float, rail_invert:bool) -> Array:
 	var convert = converting_array(fork[1])
-	if one != two and two in convert:
+	if two in convert and not (one == two and fork[1][selected_turn][0] != two):
 		one = two
 		one_invert = two_invert
 	else:
