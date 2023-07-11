@@ -14,7 +14,8 @@ grow_horizontal = 2
 grow_vertical = 0
 script = ExtResource("1_5vvyx")
 
-[node name="box" type="HBoxContainer" parent="."]
+[node name="box_railways" type="HBoxContainer" parent="."]
+visible = false
 custom_minimum_size = Vector2(0, 35)
 layout_mode = 1
 anchors_preset = 15
@@ -28,35 +29,82 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 2
 
-[node name="empty2" type="Control" parent="box"]
+[node name="empty2" type="Control" parent="box_railways"]
 visible = false
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
-[node name="edit_or_new" type="CheckBox" parent="box"]
+[node name="edit_or_new" type="CheckBox" parent="box_railways"]
+custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 tooltip_text = "Создаёт новую путь, кликните по месту желаймого размещения"
 text = "Новый"
 
-[node name="empty" type="Control" parent="box"]
+[node name="empty" type="Control" parent="box_railways"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
-[node name="binding" type="OptionButton" parent="box"]
+[node name="binding" type="OptionButton" parent="box_railways"]
 layout_mode = 2
 tooltip_text = "Привязка интерфейса"
 language = "ru_RU"
 item_count = 3
 selected = 2
-popup/item_0/text = "Право"
+popup/item_0/text = "Лево"
 popup/item_0/id = 0
 popup/item_1/text = "Центр"
 popup/item_1/id = 1
 popup/item_2/text = "Право"
 popup/item_2/id = 2
 
-[node name="TextureRect" type="TextureRect" parent="box"]
+[node name="box_carriage" type="HBoxContainer" parent="."]
+visible = false
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 2.5
+offset_right = -2.0
+offset_bottom = -2.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 2
+
+[node name="empty2" type="Control" parent="box_carriage"]
+visible = false
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
-[connection signal="toggled" from="box/edit_or_new" to="." method="edit_or_new_toggled"]
-[connection signal="item_selected" from="box/binding" to="." method="binding_selected"]
+[node name="preview" type="Button" parent="box_carriage"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+toggle_mode = true
+text = "Предпросмотр"
+
+[node name="event" type="Timer" parent="box_carriage/preview"]
+wait_time = 0.05
+autostart = true
+
+[node name="empty" type="Control" parent="box_carriage"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
+[node name="binding" type="OptionButton" parent="box_carriage"]
+layout_mode = 2
+tooltip_text = "Привязка интерфейса"
+language = "ru_RU"
+item_count = 3
+selected = 2
+popup/item_0/text = "Лево"
+popup/item_0/id = 0
+popup/item_1/text = "Центр"
+popup/item_1/id = 1
+popup/item_2/text = "Право"
+popup/item_2/id = 2
+
+[connection signal="toggled" from="box_railways/edit_or_new" to="." method="edit_or_new_toggled"]
+[connection signal="item_selected" from="box_railways/binding" to="." method="binding_selected"]
+[connection signal="toggled" from="box_carriage/preview" to="." method="toggled_preview"]
+[connection signal="item_selected" from="box_carriage/binding" to="." method="binding_selected"]

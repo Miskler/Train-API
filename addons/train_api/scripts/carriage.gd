@@ -17,10 +17,30 @@ var select_position_railway:float = CAR_LENGTH
 var select_inverted_path:bool = false
 
 ##На какую дорогу установлен вагон.
-@export var real_railway:RailWay = null
+@export_node_path("RailWay") var real_railway = null :
+	set = tool_real_railway_event
+func tool_real_railway_event(railway):
+	if not Engine.is_editor_hint() or railway == null or get_node(railway) is RailWay:
+		real_railway = railway
+		if Engine.is_editor_hint() and real_position_railway>=get_node(railway).length_path()-CAR_LENGTH:
+			tool_real_position_railway_event(get_node(railway).length_path()-(CAR_LENGTH+1))
 
 ##Начальная позиция вагона на этой дороге.
-@export var real_position_railway:float = 0.0
+@export var real_position_railway:float = 0.0 :
+	set = tool_real_position_railway_event
+func tool_real_position_railway_event(value:float):
+	if value >= 0:
+		if Engine.is_editor_hint():
+			print(real_railway)
+			if real_railway != null:
+				if value+CAR_LENGTH < get_node(real_railway).length_path():
+					real_position_railway = value
+					select_position_railway = value+CAR_LENGTH
+			else:
+				real_position_railway = value
+				select_position_railway = value+CAR_LENGTH
+		else:
+			real_position_railway = value
 
 ##Техническая переменная.
 ##Инвертирует скорость чтобы поезд мог сохранять направление движения не зависимо от направления дороги.
@@ -70,12 +90,16 @@ func tool_debug_mode_reset(mode:bool):
 func tool_car_length_reset(new_length:float):
 	if new_length >= 0 and((select_railway == null or real_railway == select_railway) or Engine.is_editor_hint()):
 		var new_pos = new_length
+		
 		if select_railway != null:
 			if select_position_railway >= real_position_railway and real_position_railway+new_length<select_railway.length_path():
 				select_position_railway = real_position_railway+new_length
 			elif select_position_railway < real_position_railway and real_position_railway-new_length>0:
 				select_position_railway = real_position_railway-new_length
 			else: return
+		elif Engine.is_editor_hint():
+			if real_railway != null and real_position_railway+new_length >= get_node(real_railway).length_path():
+				return
 		else:
 			select_position_railway = real_position_railway+new_length
 		
@@ -89,7 +113,11 @@ func tool_car_length_reset(new_length:float):
 
 ##Какую ноду вагон будет двигать по дороге (по умолчанию - себя).
 ##Он может двигать сам себя, либо передвигать 2D, 3D или Control наследованные ноды.
-@export var move_node:Node = self
+@export_node_path var move_node = null :
+	set = tool_move_node_reset
+func tool_move_node_reset(new_move):
+	if not Engine.is_editor_hint() or (new_move == null or (get_node(NodePath(new_move)) is Node2D or get_node(NodePath(new_move)) is Node3D or get_node(NodePath(new_move)) is Control)):
+		move_node = new_move
 
 
 func _enter_tree() -> void:
@@ -111,6 +139,10 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	
+	real_railway = get_node_or_null(real_railway)
+	if move_node == null: move_node = self
+	else: move_node = get_node(move_node)
+	
 	$look.visible = debug_mode
 	$icon.visible = debug_mode
 	
@@ -119,8 +151,7 @@ func _ready() -> void:
 	tool_car_length_reset(CAR_LENGTH)
 	tool_debug_mode_reset(debug_mode)
 	
-	select_position_railway = CAR_LENGTH
-	if real_railway == select_railway: select_position_railway += real_position_railway
+	select_position_railway = CAR_LENGTH+real_position_railway
 
 func _physics_process(delta) -> void:
 	if Engine.is_editor_hint(): return
@@ -135,23 +166,10 @@ func _physics_process(delta) -> void:
 	if indexes is Array: #Проверяем можем ли двигаться
 		move(vec, indexes)
 		
-		if debug_mode:
-			$look.global_position = select_railway.help_train(select_position_railway)-$look.pivot_offset
-		
-		if move_node != null:
-			#Такая разбивка нужна чтобы можно было двигать и 3D объекты без лишних проверок
-			var pos = real_railway.help_train(real_position_railway)
-			move_node.global_position.x = pos.x
-			move_node.global_position.y = pos.y
-			
-			var look_pos = select_railway.help_train(select_position_railway)
-			
-			if move_node is Node3D:
-				look_pos = Vector3(look_pos.x, look_pos.y, 0)
-			
-			move_node.look_at(look_pos)
+		render()
 	elif indexes == 0:
 		move(vec, [[0], [0]])
+		render()
 
 func move(vec:float, indexes:Array):
 	var real_move = round((vec-indexes[0][0]) * (-1.0 if real_inverted_path else 1.0))
@@ -161,6 +179,24 @@ func move(vec:float, indexes:Array):
 		real_position_railway = clamp(real_move+real_position_railway, 0, real_railway.length_path())
 	if (select_position_railway <= select_railway.length_path() and select_move >= 0) or (select_position_railway >= 0 and select_move <= 0):
 		select_position_railway = clamp(select_move+select_position_railway, 0, select_railway.length_path())
+
+##Функция применяет визуально рассчеты.
+func render():
+	if debug_mode:
+		$look.global_position = select_railway.help_train(select_position_railway)-$look.pivot_offset
+	
+	if move_node != null:
+		#Такая разбивка нужна чтобы можно было двигать и 3D объекты без лишних проверок
+		var pos = real_railway.help_train(real_position_railway)
+		move_node.global_position.x = pos.x
+		move_node.global_position.y = pos.y
+		
+		var look_pos = select_railway.help_train(select_position_railway)
+		
+		if move_node is Node3D:
+			look_pos = Vector3(look_pos.x, look_pos.y, 0)
+		
+		move_node.look_at(look_pos)
 
 ##Основная функция вагона. 
 ##Обрабатывает повороты и возращает массив данных требуемых для рассчетов движения.

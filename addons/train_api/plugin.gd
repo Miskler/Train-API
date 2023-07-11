@@ -1,7 +1,8 @@
 @tool
 extends EditorPlugin
 
-var select_ways:Node = null
+var select_ways:Node2D = null
+var select_carriage:Carriage = null
 
 var bottom_gui = preload("scenes/ui.tscn").instantiate()
 func _enter_tree():
@@ -13,6 +14,8 @@ func _enter_tree():
 	
 	add_control_to_container(EditorPlugin.CONTAINER_CANVAS_EDITOR_BOTTOM, bottom_gui)
 	_make_visible(false)
+	bottom_gui.get_node("box_carriage/preview/event").connect("timeout", carriage_preview)
+	
 	set_force_draw_over_forwarding_enabled()
 	
 	get_editor_interface().get_selection().clear()
@@ -31,12 +34,24 @@ func _make_visible(visible):
 
 
 func _handles(object:Object) -> bool:
+	bottom_gui.toggled_preview(false)
 	if object is Node and (object is TrainAPI or object.get_parent() is TrainAPI):
 		select_ways = object
+		select_carriage = null
+		bottom_gui.get_node("box_railways").show()
+		bottom_gui.get_node("box_carriage").hide()
+		_make_visible(true)
+		return true
+	elif object is Carriage:
+		select_ways = null
+		select_carriage = object
+		bottom_gui.get_node("box_railways").hide()
+		bottom_gui.get_node("box_carriage").show()
 		_make_visible(true)
 		return true
 	else: 
 		select_ways = null
+		select_carriage = null
 		_make_visible(false)
 		return false
 
@@ -86,3 +101,27 @@ func new_way():
 	get_editor_interface().get_selection().add_node(root.get_node(path.get_path()))
 	
 	print("Train API: plugin.gd: new_way() -> created, name: "+path.name)
+
+
+func carriage_preview():
+	if select_carriage != null and select_carriage.real_railway != null:
+		select_carriage.get_node("look").global_position = select_carriage.get_node(select_carriage.real_railway).help_train(select_carriage.real_position_railway+select_carriage.CAR_LENGTH)-select_carriage.get_node("look").pivot_offset
+		
+		var move = select_carriage.move_node
+		if move == null:
+			move = select_carriage
+		else:
+			move = select_carriage.get_node_or_null(move)
+		
+		if move != null:
+			#Такая разбивка нужна чтобы можно было двигать и 3D объекты без лишних проверок
+			var pos = select_carriage.get_node(select_carriage.real_railway).help_train(select_carriage.real_position_railway)
+			move.global_position.x = pos.x
+			move.global_position.y = pos.y
+			
+			var look_pos = select_carriage.get_node(select_carriage.real_railway).help_train(select_carriage.real_position_railway+select_carriage.CAR_LENGTH)
+			
+			if move is Node3D:
+				look_pos = Vector3(look_pos.x, look_pos.y, 0)
+			
+			move.look_at(look_pos)
