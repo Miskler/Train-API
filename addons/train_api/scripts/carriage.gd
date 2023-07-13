@@ -17,13 +17,12 @@ var select_position_railway:float = CAR_LENGTH
 var select_inverted_path:bool = false
 
 ##На какую дорогу установлен вагон.
-@export_node_path("RailWay") var real_railway = null :
+@export var real_railway:RailWay = null :
 	set = tool_real_railway_event
 func tool_real_railway_event(railway):
-	if not Engine.is_editor_hint() or railway == null or get_node(railway) is RailWay:
-		real_railway = railway
-		if Engine.is_editor_hint() and real_position_railway>=get_node(railway).length_path()-CAR_LENGTH:
-			tool_real_position_railway_event(get_node(railway).length_path()-(CAR_LENGTH+1))
+	real_railway = railway
+	if Engine.is_editor_hint() and railway != null and real_position_railway>=railway.length_path()-CAR_LENGTH:
+		tool_real_position_railway_event(railway.length_path()-(CAR_LENGTH+1))
 
 ##Начальная позиция вагона на этой дороге.
 @export var real_position_railway:float = 0.0 :
@@ -33,7 +32,7 @@ func tool_real_position_railway_event(value:float):
 		if Engine.is_editor_hint():
 			print(real_railway)
 			if real_railway != null:
-				if value+CAR_LENGTH < get_node(real_railway).length_path():
+				if value+CAR_LENGTH < real_railway.length_path():
 					real_position_railway = value
 					select_position_railway = value+CAR_LENGTH
 			else:
@@ -98,7 +97,7 @@ func tool_car_length_reset(new_length:float):
 				select_position_railway = real_position_railway-new_length
 			else: return
 		elif Engine.is_editor_hint():
-			if real_railway != null and real_position_railway+new_length >= get_node(real_railway).length_path():
+			if real_railway != null and real_position_railway+new_length >= real_railway.length_path():
 				return
 		else:
 			select_position_railway = real_position_railway+new_length
@@ -113,11 +112,7 @@ func tool_car_length_reset(new_length:float):
 
 ##Какую ноду вагон будет двигать по дороге (по умолчанию - себя).
 ##Он может двигать сам себя, либо передвигать 2D, 3D или Control наследованные ноды.
-@export_node_path var move_node = null :
-	set = tool_move_node_reset
-func tool_move_node_reset(new_move):
-	if not Engine.is_editor_hint() or (new_move == null or (get_node(NodePath(new_move)) is Node2D or get_node(NodePath(new_move)) is Node3D or get_node(NodePath(new_move)) is Control)):
-		move_node = new_move
+@export var move_node:Node = null
 
 
 func _enter_tree() -> void:
@@ -139,9 +134,8 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	
-	real_railway = get_node_or_null(real_railway)
-	if move_node == null: move_node = self
-	else: move_node = get_node(move_node)
+	if move_node == null:
+		move_node = self
 	
 	$look.visible = debug_mode
 	$icon.visible = debug_mode

@@ -104,22 +104,17 @@ func new_way():
 
 
 func carriage_preview():
-	if select_carriage != null and select_carriage.real_railway != null:
-		select_carriage.get_node("look").global_position = select_carriage.get_node(select_carriage.real_railway).help_train(select_carriage.real_position_railway+select_carriage.CAR_LENGTH)-select_carriage.get_node("look").pivot_offset
-		
+	if select_carriage != null and select_carriage.real_railway != null and  select_carriage.move_node != null:
 		var move = select_carriage.move_node
-		if move == null:
-			move = select_carriage
-		else:
-			move = select_carriage.get_node_or_null(move)
+		select_carriage.get_node("look").global_position = select_carriage.real_railway.help_train(select_carriage.real_position_railway+select_carriage.CAR_LENGTH)-select_carriage.get_node("look").pivot_offset
 		
 		if move != null:
 			#Такая разбивка нужна чтобы можно было двигать и 3D объекты без лишних проверок
-			var pos = select_carriage.get_node(select_carriage.real_railway).help_train(select_carriage.real_position_railway)
+			var pos = select_carriage.real_railway.help_train(select_carriage.real_position_railway)
 			move.global_position.x = pos.x
 			move.global_position.y = pos.y
 			
-			var look_pos = select_carriage.get_node(select_carriage.real_railway).help_train(select_carriage.real_position_railway+select_carriage.CAR_LENGTH)
+			var look_pos = select_carriage.real_railway.help_train(select_carriage.real_position_railway+select_carriage.CAR_LENGTH)
 			
 			if move is Node3D:
 				look_pos = Vector3(look_pos.x, look_pos.y, 0)

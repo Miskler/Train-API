@@ -14,9 +14,9 @@ point_count = 3
 
 [sub_resource type="Curve2D" id="Curve2D_njgqq"]
 _data = {
-"points": PackedVector2Array(46.0209, 17.3982, 0, 0, -92.791, 724.187, 74.1434, -9.13425, -74.1434, 9.13425, -215.791, -24.813, 25.789, -25.789, -25.789, 25.789, -344.791, 35.187, 26.1318, -52.9827, -26.1318, 52.9827, -417.791, 136.187, -4.23785, -78.4003, 4.23785, 78.4003, -442.791, 352.187, -24.3676, -37.0812, 24.3676, 37.0812, -412.791, 519.187, -29.6601, -26.3726, 29.6601, 26.3726, -315.791, 644.187, -55.7173, -20.1044, 55.7173, 20.1044, -223.791, 703.187, 0, 0, 0, 0, -91.791, 724.187)
+"points": PackedVector2Array(46.0209, 17.3982, 0, 0, -92.791, 724.187, 9.68908, 159.466, -9.68908, -159.466, -379.791, 429.187, 0, 0, 0, 0, -262.791, 89.187, 0, 0, 0, 0, -91.791, 724.187)
 }
-point_count = 9
+point_count = 4
 
 [sub_resource type="Curve2D" id="Curve2D_odiuq"]
 _data = {
@@ -100,13 +100,13 @@ position = Vector2(420, -379)
 curve = SubResource("Curve2D_odiuq")
 width = 5.0
 
-[node name="Carriage" parent="." instance=ExtResource("5_5yyyn")]
-position = Vector2(383, 359)
-rotation = -1.66801
-real_railway = NodePath("../Train API/railway3")
+[node name="Carriage" parent="." node_paths=PackedStringArray("real_railway", "move_node") instance=ExtResource("5_5yyyn")]
+position = Vector2(333, 376)
+rotation = -2.57327
+real_railway = NodePath("../Train API/railway2")
 debug_mode = true
-speed = 5.156
-CAR_LENGTH = 80
+CAR_LENGTH = 180
+move_node = NodePath(".")
 
 [connection signal="value_changed" from="Camera2D/interface/full/control_speed" to="Camera2D/interface" method="value_changed"]
 [connection signal="value_changed" from="Camera2D/interface/full/control_size" to="Camera2D/interface" method="_on_control_speed_2_value_changed"]
